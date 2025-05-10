@@ -27,6 +27,9 @@ public class UserInfoEntity extends BaseEntity implements UserDetails {
     @Column(name = "ID")
     private UUID id;
 
+    @Column(name = "AGE", nullable = false)
+    private Integer age;
+
     @Column(name = "FIRST_NAME")
     private String firstName;
 
@@ -39,6 +42,9 @@ public class UserInfoEntity extends BaseEntity implements UserDetails {
     @Column(name = "PHONE_NUMBER")
     private String phoneNumber;
 
+    @Column(name = "PIN_CODE")
+    private String pinCode;
+
     @Temporal(TemporalType.DATE)
     @Column(name = "DATE_OF_BIRTH")
     @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
@@ -50,14 +56,26 @@ public class UserInfoEntity extends BaseEntity implements UserDetails {
     @Column(name = "ADDRESS")
     private String address;
 
-    @Column(name = "PASSWORD",nullable = false)
+    @Column(name = "PASSWORD", nullable = false)
     private String password;
 
-    @Column(name = "ENCODED_PASSWORD",nullable = false)
+    @Column(name = "ENCODED_PASSWORD", nullable = false)
     private String encodedPassword;
 
     @Enumerated(EnumType.STRING)
     private RoleEnum roleEnum;
+
+    @Column(name = "MARITAL_STATUS", nullable = false)
+    private String maritalStatus;
+
+    @Column(name = "PLAN_SELECTION", nullable = false)
+    private String planSelection;
+
+    @Column(name = "PATIENT_HISTORY")
+    private String patientHistory;
+
+    @Column(name = "EXISTING_DISEASES", nullable = false)
+    private String existingDiseases;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -65,7 +83,9 @@ public class UserInfoEntity extends BaseEntity implements UserDetails {
     }
 
     @Override
-    public String getPassword() {return encodedPassword;}
+    public String getPassword() {
+        return encodedPassword;
+    }
 
     @Override
     public String getUsername() {

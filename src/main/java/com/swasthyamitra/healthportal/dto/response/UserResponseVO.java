@@ -17,15 +17,25 @@ public class UserResponseVO {
 
     private String lastName;
 
+    private Integer age;
+
+    private String role;
+
+    private String gender;
+
+    private String maritalStatus;
+
     private String email;
 
     private String phoneNumber;
 
-    private String dateOfBirth;
-
-    private String gender;
-
     private String address;
 
-    private String role;
+    private String pinCode;
+
+    private String planSelection;
+
+    private String patientHistory;
+
+    private String existingDiseases;
 }

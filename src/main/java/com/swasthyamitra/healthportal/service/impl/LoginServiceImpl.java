@@ -12,7 +12,7 @@ import com.swasthyamitra.healthportal.enums.TokenType;
 import com.swasthyamitra.healthportal.repository.TokenRepository;
 import com.swasthyamitra.healthportal.repository.UserInfoRepository;
 import com.swasthyamitra.healthportal.service.LoginService;
-import com.swasthyamitra.healthportal.utils.PasswordUtils;
+import com.swasthyamitra.healthportal.utils.CommonUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -44,7 +44,7 @@ public class LoginServiceImpl implements LoginService {
         UserInfoEntity userAuth = userInfoRepository.findByEmailAndIsDeletedFalse(loginRequest.getUserName())
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorMessageConstants.USER_NOT_FOUND));
 
-        boolean validPassword = PasswordUtils.verifyPassword(loginRequest.getPassword(), userAuth.getEncodedPassword());
+        boolean validPassword = CommonUtils.verifyPassword(loginRequest.getPassword(), userAuth.getEncodedPassword());
 
         if (!validPassword) {
             throw new InvalidPasswordException("Invalid password");

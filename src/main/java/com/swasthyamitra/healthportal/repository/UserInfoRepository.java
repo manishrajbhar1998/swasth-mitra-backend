@@ -2,6 +2,7 @@ package com.swasthyamitra.healthportal.repository;
 
 
 import com.swasthyamitra.healthportal.entity.UserInfoEntity;
+import com.swasthyamitra.healthportal.enums.RoleEnum;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,10 +23,16 @@ public interface UserInfoRepository extends JpaRepository<UserInfoEntity, UUID> 
 
     Optional<UserInfoEntity> findByEmailAndIsDeletedFalse(String email);
 
-    boolean existsByEmailAndIsDeletedFalse(String email);
-
     @Query("SELECT c FROM UserInfoEntity c WHERE c.isDeleted = false ORDER BY c.createdAt DESC")
     List<UserInfoEntity> findAllByIsDeletedFalse();
 
+    @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM UserInfoEntity c WHERE c.email = :email AND c.isDeleted = false")
+    boolean existsByEmail(String email);
+
+    @Query("SELECT c FROM UserInfoEntity c WHERE c.roleEnum = :roleEnum AND c.isDeleted = false")
+    List<UserInfoEntity> findByRoleEnum(RoleEnum roleEnum);
+
+    @Query("SELECT c FROM UserInfoEntity c WHERE c.email = :email AND c.isDeleted = false")
+    Optional<UserInfoEntity> findByEmail(String email);
 
 }

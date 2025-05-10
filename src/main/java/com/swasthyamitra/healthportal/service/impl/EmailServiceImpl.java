@@ -1,5 +1,6 @@
 package com.swasthyamitra.healthportal.service.impl;
 
+import com.swasthyamitra.healthportal.entity.UserInfoEntity;
 import com.swasthyamitra.healthportal.service.EmailService;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
@@ -19,6 +20,12 @@ public class EmailServiceImpl implements EmailService {
 
     @Value("${spring.mail.username}")
     private String sender;
+
+    @Value("${app.url.base}")
+    private String baseUrl;
+
+    @Value("${app.url.reset}")
+    private String appResetUrl;
 
     @Override
     public boolean sendEmail(String resetLink, String toEmail) {
@@ -43,6 +50,18 @@ public class EmailServiceImpl implements EmailService {
             return false;
         }
     }
+
+    @Override
+    public void sendForgotPasswordMail(String email, String token) {
+        String resetPasswordLink = baseUrl + appResetUrl;
+        String link = resetPasswordLink.replace("{token}", token);
+
+        log.info("Sending forgot password email to: {}", email);
+        log.debug("Reset password link: {}", link); // Only for debug, remove in production
+
+        sendEmail(link, email);
+    }
+
 
 
     private String prepareEmailBodyHtml(String resetLink) {

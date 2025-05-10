@@ -1,20 +1,21 @@
 package com.swasthyamitra.healthportal.controller;
 
 import com.swasthyamitra.healthportal.constants.ApiResponseMessages;
+import com.swasthyamitra.healthportal.dto.request.ForgotPasswordRequest;
 import com.swasthyamitra.healthportal.dto.request.LoginRequestVO;
+import com.swasthyamitra.healthportal.dto.request.ResetPasswordRequest;
 import com.swasthyamitra.healthportal.dto.request.ValidateTokenRequestVO;
 import com.swasthyamitra.healthportal.dto.response.ApiResponse;
 import com.swasthyamitra.healthportal.dto.response.JwtResponseVO;
 import com.swasthyamitra.healthportal.dto.response.ValidateTokenResponseVO;
 import com.swasthyamitra.healthportal.service.LoginService;
+import com.swasthyamitra.healthportal.service.UserService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.concurrent.ExecutionException;
 
@@ -24,9 +25,12 @@ import java.util.concurrent.ExecutionException;
 public class AuthAPI {
 
     private final LoginService loginService;
+    private final UserService userService;
 
-    public AuthAPI(LoginService loginService) {
+    @Autowired
+    public AuthAPI(LoginService loginService, UserService userService) {
         this.loginService = loginService;
+        this.userService = userService;
     }
 
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -53,6 +57,34 @@ public class AuthAPI {
                 .build();
 
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<ApiResponse<String>> resetPassword(
+            @Valid @RequestBody ResetPasswordRequest resetPasswordRequest) {
+
+        log.info("Reset password request received with token: {}", resetPasswordRequest.getToken());
+
+        userService.resetPassword(resetPasswordRequest.getToken(), resetPasswordRequest.getNewPassword());
+
+        return ResponseEntity.ok(
+                ApiResponse.<String>builder()
+                        .message("Password has been reset successfully.")
+                        .build()
+        );
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<ApiResponse<String>> forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        log.info("Forgot password request received for email: {}", request.getEmail());
+
+        userService.handleForgotPassword(request.getEmail());
+
+        return ResponseEntity.ok(
+                ApiResponse.<String>builder()
+                        .message("Your reset password link has been sent to your registered email address")
+                        .build()
+        );
     }
 
 }

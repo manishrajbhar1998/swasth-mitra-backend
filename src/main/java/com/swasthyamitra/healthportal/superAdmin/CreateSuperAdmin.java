@@ -3,7 +3,7 @@ package com.swasthyamitra.healthportal.superAdmin;
 import com.swasthyamitra.healthportal.entity.UserInfoEntity;
 import com.swasthyamitra.healthportal.enums.RoleEnum;
 import com.swasthyamitra.healthportal.repository.UserInfoRepository;
-import com.swasthyamitra.healthportal.utils.PasswordUtils;
+import com.swasthyamitra.healthportal.utils.CommonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,19 +36,16 @@ public class CreateSuperAdmin implements CommandLineRunner {
 
 
         if (userInfoEntity.isEmpty()) {
-            String password = PasswordUtils.generateDummyPassword();
+            String password = CommonUtils.generateDummyPassword();
             UserInfoEntity userInfo = new UserInfoEntity();
             userInfo.setFirstName(firstName);
             userInfo.setLastName(lastName);
             userInfo.setEmail(email);
             userInfo.setPassword(password);
             System.out.println(password);
-            userInfo.setEncodedPassword(PasswordUtils.hashPassword(password));
+            userInfo.setEncodedPassword(CommonUtils.hashPassword(password));
             userInfo.setRoleEnum(RoleEnum.SUPER_ADMIN);
             userInfoRepository.save(userInfo);
-
-
-
         }
     }
 
