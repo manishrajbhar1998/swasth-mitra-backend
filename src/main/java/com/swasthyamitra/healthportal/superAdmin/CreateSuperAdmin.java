@@ -43,6 +43,17 @@ public class CreateSuperAdmin implements CommandLineRunner {
             userInfo.setEmail(email);
             userInfo.setPassword(password);
             System.out.println(password);
+
+            // 🔧 Set required non-null fields
+            userInfo.setAge(35);
+            userInfo.setPhoneNumber("9999999999");
+            userInfo.setGender("Male");
+            userInfo.setPinCode("110001");
+            userInfo.setAddress("System Admin HQ");
+            userInfo.setMaritalStatus("Single");
+            userInfo.setPlanSelection("AdminPlan");
+            userInfo.setExistingDiseases("None");
+
             userInfo.setEncodedPassword(CommonUtils.hashPassword(password));
             userInfo.setRoleEnum(RoleEnum.SUPER_ADMIN);
             userInfoRepository.save(userInfo);
