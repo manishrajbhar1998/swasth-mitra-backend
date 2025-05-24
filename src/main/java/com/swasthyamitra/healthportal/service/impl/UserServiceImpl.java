@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -80,7 +81,9 @@ public class UserServiceImpl implements UserService {
             userInfoEntities = userInfoRepository.findAll();
         } else if ("STATE_ADMIN".equalsIgnoreCase(role.toString())) {
             userInfoEntities = userInfoRepository.findByRoleEnumAndState(roleEnum, state);
-        } else {
+        } else if ("USER".equalsIgnoreCase(role.toString())) {
+            userInfoEntities = new ArrayList<>();
+        }else {
             userInfoEntities = userInfoRepository.findByRoleEnumAndStateAndDistrict(roleEnum, state, district);
         }
 
