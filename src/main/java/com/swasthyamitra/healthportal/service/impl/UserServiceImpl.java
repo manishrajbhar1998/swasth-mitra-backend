@@ -16,7 +16,6 @@ import com.swasthyamitra.healthportal.repository.UserInfoRepository;
 import com.swasthyamitra.healthportal.service.EmailService;
 import com.swasthyamitra.healthportal.service.UserService;
 import com.swasthyamitra.healthportal.utils.CommonUtils;
-import com.swasthyamitra.healthportal.utils.DateUtils;
 import com.swasthyamitra.healthportal.utils.ValidationUtils;
 import io.micrometer.common.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -157,6 +156,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void resetPassword(String token, String password) {
+
        TokenLogEntity tokenLog = verifyTokenForResetPassword(token);
 
         UserInfoEntity userInfoEntity = userInfoRepository.findById(tokenLog.getUserId())

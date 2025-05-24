@@ -1,11 +1,8 @@
 package com.swasthyamitra.healthportal.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.swasthyamitra.healthportal.enums.RoleEnum;
-import jakarta.persistence.*;
+
 import lombok.Data;
 
-import java.util.Date;
 import java.util.UUID;
 
 @Data

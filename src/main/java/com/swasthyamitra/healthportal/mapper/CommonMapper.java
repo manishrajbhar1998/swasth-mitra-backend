@@ -14,9 +14,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @Mapper(componentModel = "spring",imports = CommonUtils.class)
 public interface CommonMapper {

@@ -1,6 +1,5 @@
 package com.swasthyamitra.healthportal.confg;
 
-
 import com.swasthyamitra.healthportal.repository.TokenRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

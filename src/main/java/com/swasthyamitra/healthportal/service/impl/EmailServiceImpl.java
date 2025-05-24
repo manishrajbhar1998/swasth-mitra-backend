@@ -1,6 +1,5 @@
 package com.swasthyamitra.healthportal.service.impl;
 
-import com.swasthyamitra.healthportal.entity.UserInfoEntity;
 import com.swasthyamitra.healthportal.service.EmailService;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;

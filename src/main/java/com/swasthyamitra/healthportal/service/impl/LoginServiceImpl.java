@@ -13,6 +13,7 @@ import com.swasthyamitra.healthportal.repository.TokenRepository;
 import com.swasthyamitra.healthportal.repository.UserInfoRepository;
 import com.swasthyamitra.healthportal.service.LoginService;
 import com.swasthyamitra.healthportal.utils.CommonUtils;
+import com.swasthyamitra.healthportal.utils.ValidationUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -40,6 +41,8 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public JwtResponseVO authenticateUser(LoginRequestVO loginRequest) throws ExecutionException, InterruptedException {
+
+        ValidationUtils.Cc(loginRequest);
 
         UserInfoEntity userAuth = userInfoRepository.findByEmailAndIsDeletedFalse(loginRequest.getUserName())
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorMessageConstants.USER_NOT_FOUND));

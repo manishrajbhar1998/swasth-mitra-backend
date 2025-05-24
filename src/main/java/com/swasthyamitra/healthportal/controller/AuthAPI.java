@@ -10,6 +10,7 @@ import com.swasthyamitra.healthportal.dto.response.JwtResponseVO;
 import com.swasthyamitra.healthportal.dto.response.ValidateTokenResponseVO;
 import com.swasthyamitra.healthportal.service.LoginService;
 import com.swasthyamitra.healthportal.service.UserService;
+import com.swasthyamitra.healthportal.utils.ValidationUtils;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +66,8 @@ public class AuthAPI {
 
         log.info("Reset password request received with token: {}", resetPasswordRequest.getToken());
 
+        ValidationUtils.Cc(resetPasswordRequest);
+
         userService.resetPassword(resetPasswordRequest.getToken(), resetPasswordRequest.getNewPassword());
 
         return ResponseEntity.ok(
@@ -77,6 +80,8 @@ public class AuthAPI {
     @PostMapping("/forgot-password")
     public ResponseEntity<ApiResponse<String>> forgotPassword(@RequestBody ForgotPasswordRequest request) {
         log.info("Forgot password request received for email: {}", request.getEmail());
+
+        ValidationUtils.Cc(request);
 
         userService.handleForgotPassword(request.getEmail());
 
