@@ -45,14 +45,14 @@ public class UserAPI {
 
     // READ ALL
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<ApiResponse<List<UserResponseVO>>> getAllUsers() {
+        public ResponseEntity<ApiResponse<List<UserResponseVO>>> getAllUsers(@RequestParam(required = false)String role) {
         log.info("Fetching all users");
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserInfoEntity userInfoEntity = (UserInfoEntity) authentication.getPrincipal();
 
         List<UserResponseVO> users = userService.getAllUsers(userInfoEntity.getRoleEnum(),userInfoEntity.getState(),
-                userInfoEntity.getDistrict());
+                userInfoEntity.getDistrict(), role);
 
         ApiResponse<List<UserResponseVO>> response = ApiResponse.<List<UserResponseVO>>builder()
                 .data(users)

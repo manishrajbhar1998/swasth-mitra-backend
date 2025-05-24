@@ -71,17 +71,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserResponseVO> getAllUsers(RoleEnum role, String state, String district) {
+    public List<UserResponseVO> getAllUsers(RoleEnum authorizeRole, String state, String district, String filterRole) {
         List<UserInfoEntity> userInfoEntities;
 
         RoleEnum roleEnum = CommonUtils.toValidRole("USER");
 
-        if ("SUPER_ADMIN".equalsIgnoreCase(role.toString())) {
+        if ("SUPER_ADMIN".equalsIgnoreCase(authorizeRole.toString())) {
             // No role filter — fetch all
-            userInfoEntities = userInfoRepository.findAll();
-        } else if ("STATE_ADMIN".equalsIgnoreCase(role.toString())) {
+            RoleEnum superAdminRole = CommonUtils.toValidRole(filterRole);
+            userInfoEntities = userInfoRepository.findByRoleEnum(superAdminRole);
+        } else if ("STATE_ADMIN".equalsIgnoreCase(authorizeRole.toString())) {
             userInfoEntities = userInfoRepository.findByRoleEnumAndState(roleEnum, state);
-        } else if ("USER".equalsIgnoreCase(role.toString())) {
+        } else if ("USER".equalsIgnoreCase(authorizeRole.toString())) {
             userInfoEntities = new ArrayList<>();
         }else {
             userInfoEntities = userInfoRepository.findByRoleEnumAndStateAndDistrict(roleEnum, state, district);

@@ -40,4 +40,7 @@ public interface UserInfoRepository extends JpaRepository<UserInfoEntity, UUID> 
 
     @Query("SELECT c FROM UserInfoEntity c WHERE c.roleEnum = :roleEnum AND c.state = :state AND c.district = :district AND c.isDeleted = false")
     List<UserInfoEntity> findByRoleEnumAndStateAndDistrict(RoleEnum roleEnum, String state, String district);
+
+    @Query("SELECT c FROM UserInfoEntity c WHERE c.roleEnum = :roleEnum AND c.isDeleted = false")
+    List<UserInfoEntity> findByRoleEnum(RoleEnum roleEnum);
 }

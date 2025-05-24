@@ -11,7 +11,7 @@ public interface UserService {
 
     UserResponseVO addUser(UserRequestVO userRequestVO);
 
-    List<UserResponseVO> getAllUsers(RoleEnum roleEnum, String state, String district);
+    List<UserResponseVO> getAllUsers(RoleEnum roleEnum, String state, String district, String role);
 
     UserResponseVO getUserById(UUID id);
 
