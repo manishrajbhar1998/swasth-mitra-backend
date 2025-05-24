@@ -17,7 +17,7 @@ public class UserResponseVO {
 
     private String lastName;
 
-    private Integer age;
+    private String dateOfBirth;
 
     private String role;
 
@@ -38,4 +38,8 @@ public class UserResponseVO {
     private String patientHistory;
 
     private String existingDiseases;
+
+    private String city;
+
+    private String state;
 }

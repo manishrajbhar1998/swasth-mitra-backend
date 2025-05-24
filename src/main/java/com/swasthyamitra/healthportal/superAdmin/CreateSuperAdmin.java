@@ -4,12 +4,15 @@ import com.swasthyamitra.healthportal.entity.UserInfoEntity;
 import com.swasthyamitra.healthportal.enums.RoleEnum;
 import com.swasthyamitra.healthportal.repository.UserInfoRepository;
 import com.swasthyamitra.healthportal.utils.CommonUtils;
+import com.swasthyamitra.healthportal.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.text.ParseException;
+import java.util.Date;
 import java.util.Optional;
 
 @Component
@@ -31,7 +34,7 @@ public class CreateSuperAdmin implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) {
+    public void run(String... args) throws ParseException {
         Optional<UserInfoEntity> userInfoEntity = userInfoRepository.findByEmailAndIsDeletedFalse(email);
 
 
@@ -45,7 +48,8 @@ public class CreateSuperAdmin implements CommandLineRunner {
             System.out.println(password);
 
             // 🔧 Set required non-null fields
-            userInfo.setAge(35);
+            Date dob = DateUtils.stringToDate("01-01-1990");
+            userInfo.setDateOfBirth(dob);
             userInfo.setPhoneNumber("9999999999");
             userInfo.setGender("Male");
             userInfo.setPinCode("110001");

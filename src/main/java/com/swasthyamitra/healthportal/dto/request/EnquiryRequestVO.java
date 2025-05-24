@@ -26,4 +26,6 @@ public class EnquiryRequestVO
     private String state;
     private String country;
     private String pinCode;
+    private String createdBy;
+    private String updatedBy;
 }

@@ -7,7 +7,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "SM_ENQUIRY")
 @Data
-public class EnquiryEntity {
+public class EnquiryEntity extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

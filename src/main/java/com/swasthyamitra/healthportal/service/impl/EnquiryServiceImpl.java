@@ -6,6 +6,7 @@ import com.swasthyamitra.healthportal.entity.EnquiryEntity;
 import static com.swasthyamitra.healthportal.mapper.CommonMapper.mapper;
 import com.swasthyamitra.healthportal.repository.EnquiryRepository;
 import com.swasthyamitra.healthportal.service.EnquiryService;
+import com.swasthyamitra.healthportal.utils.ValidationUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +28,10 @@ public class EnquiryServiceImpl implements EnquiryService {
     @Override
     public EnquiryResponseVO saveEnquiry(EnquiryRequestVO enquiryRequest) {
         log.info("Saving new enquiry for user: {}", enquiryRequest.getUserName());
+        ValidationUtils.Cc(enquiryRequest);
 
         EnquiryEntity enquiryEntity = mapper.convertEnquiryRequestToEnquiryEntity(enquiryRequest);
+        enquiryEntity.setCreatedBy(enquiryRequest.getCreatedBy());
         EnquiryEntity savedEnquiry = enquiryRepository.save(enquiryEntity);
 
         log.info("Enquiry saved successfully with ID: {}", savedEnquiry.getId());

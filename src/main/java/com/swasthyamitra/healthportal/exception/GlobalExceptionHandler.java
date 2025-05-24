@@ -64,6 +64,18 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(RequiredFieldMissingException.class)
+    private ResponseEntity<ErrorResponse> handleRequiredFieldMissingException(RequiredFieldMissingException ex) {
+        log.error("Missing Required Fields: {}", ex.getErrors());
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                "Missing or Invalid Fields",
+                ex.getErrors()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+
     private record ErrorResponse(int status, String message, List<String> errors) {
     }
 

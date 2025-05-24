@@ -27,9 +27,6 @@ public class UserInfoEntity extends BaseEntity implements UserDetails {
     @Column(name = "ID")
     private UUID id;
 
-    @Column(name = "AGE", nullable = false)
-    private Integer age;
-
     @Column(name = "FIRST_NAME")
     private String firstName;
 
@@ -76,6 +73,12 @@ public class UserInfoEntity extends BaseEntity implements UserDetails {
 
     @Column(name = "EXISTING_DISEASES", nullable = false)
     private String existingDiseases;
+
+    @Column(name = "CITY")
+    private String city;
+
+    @Column(name = "STATE")
+    private String state;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

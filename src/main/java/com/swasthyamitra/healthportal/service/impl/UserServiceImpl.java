@@ -16,6 +16,8 @@ import com.swasthyamitra.healthportal.repository.UserInfoRepository;
 import com.swasthyamitra.healthportal.service.EmailService;
 import com.swasthyamitra.healthportal.service.UserService;
 import com.swasthyamitra.healthportal.utils.CommonUtils;
+import com.swasthyamitra.healthportal.utils.DateUtils;
+import com.swasthyamitra.healthportal.utils.ValidationUtils;
 import io.micrometer.common.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,11 +51,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseVO addUser(UserRequestVO userRequestVO) {
 
+        ValidationUtils.Cc(userRequestVO);
+
         if (userInfoRepository.existsByEmail(userRequestVO.getEmail())) {
             throw new UserExistsException("Email already registered: " + userRequestVO.getEmail());
         }
+
+        if (userInfoRepository.existsByPhoneNumber(userRequestVO.getPhoneNumber())) {
+            throw new UserExistsException("Phone Number already registered: " + userRequestVO.getPhoneNumber());
+        }
+
         UserInfoEntity userInfoEntity = mapper.convertUserRequestToUserInfoEntity(userRequestVO);
         userInfoEntity.setEmail(userRequestVO.getEmail());
+        userInfoEntity.setCreatedBy(userRequestVO.getCreatedBy());
         userInfoEntity.setPassword(userRequestVO.getPassword());
         userInfoEntity.setEncodedPassword(CommonUtils.hashPassword(userRequestVO.getPassword()));
 
@@ -90,6 +100,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseVO updateUser(UUID id, UserRequestVO userRequestVO) {
 
+        ValidationUtils.Cc(userRequestVO);
+
         UserInfoEntity user = userInfoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + id));
         if (!user.getEmail().equalsIgnoreCase(userRequestVO.getEmail())) {
@@ -98,8 +110,15 @@ public class UserServiceImpl implements UserService {
             }
         }
 
+        if (!user.getPhoneNumber().equalsIgnoreCase(userRequestVO.getPhoneNumber())) {
+            if (userInfoRepository.existsByPhoneNumber(userRequestVO.getPhoneNumber())) {
+                throw new UserExistsException("Phone Number already registered: " + userRequestVO.getPhoneNumber());
+            }
+        }
+
         UserInfoEntity userInfoEntity = mapper.convertUserRequestToUserInfoEntity(userRequestVO);
         userInfoEntity.setEmail(userRequestVO.getEmail());
+        userInfoEntity.setUpdatedBy(userRequestVO.getUpdatedBy());
         userInfoEntity.setId(user.getId());
 
         userInfoRepository.save(userInfoEntity);

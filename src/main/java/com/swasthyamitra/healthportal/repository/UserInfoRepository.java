@@ -29,6 +29,9 @@ public interface UserInfoRepository extends JpaRepository<UserInfoEntity, UUID> 
     @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM UserInfoEntity c WHERE c.email = :email AND c.isDeleted = false")
     boolean existsByEmail(String email);
 
+    @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM UserInfoEntity c WHERE c.phoneNumber = :phoneNumber AND c.isDeleted = false")
+    boolean existsByPhoneNumber(String phoneNumber);
+
     @Query("SELECT c FROM UserInfoEntity c WHERE c.roleEnum = :roleEnum AND c.isDeleted = false")
     List<UserInfoEntity> findByRoleEnum(RoleEnum roleEnum);
 

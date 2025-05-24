@@ -1,8 +1,10 @@
 package com.swasthyamitra.healthportal.dto.request;
 
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 @Data
@@ -14,8 +16,9 @@ public class UserRequestVO {
     @NotBlank(message = "Last Name is required.")
     private String lastName;
 
-    @NotNull(message = "Age is required.")
-    private Integer age;
+    @NotBlank(message = "Date of Birth is required.")
+    @Pattern(regexp = "^\\d{2}-\\d{2}-\\d{4}$", message = "Date of Birth must be in the format dd-MM-yyyy")
+    private String dateOfBirth;
 
     @NotBlank(message = "Gender is required.")
     private String gender;
@@ -29,7 +32,7 @@ public class UserRequestVO {
     @NotBlank(message = "Phone Number is required.")
     private String phoneNumber;
 
-    @NotBlank(message = "Address is required.")
+    @NotBlank(message = "Address Number is required.")
     private String address;
 
     @NotBlank(message = "Role is required.")
@@ -46,4 +49,14 @@ public class UserRequestVO {
 
     @NotBlank(message = "Password is required.")
     private String password;
+
+    private String createdBy;
+
+    private String updatedBy;
+
+    @NotBlank(message = "City is required.")
+    private String city;
+
+    @NotBlank(message = "State is required.")
+    private String state;
 }
