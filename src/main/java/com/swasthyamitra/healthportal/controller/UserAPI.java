@@ -1,9 +1,9 @@
 package com.swasthyamitra.healthportal.controller;
 
-import com.swasthyamitra.healthportal.dto.request.ForgotPasswordRequest;
 import com.swasthyamitra.healthportal.dto.request.UserRequestVO;
 import com.swasthyamitra.healthportal.dto.response.ApiResponse;
 import com.swasthyamitra.healthportal.dto.response.UserResponseVO;
+import com.swasthyamitra.healthportal.entity.UserInfoEntity;
 import com.swasthyamitra.healthportal.service.UserService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,10 +45,14 @@ public class UserAPI {
 
     // READ ALL
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<ApiResponse<List<UserResponseVO>>> getAllUsers(@RequestParam(required = false)String role) {
+        public ResponseEntity<ApiResponse<List<UserResponseVO>>> getAllUsers() {
         log.info("Fetching all users");
 
-        List<UserResponseVO> users = userService.getAllUsers(role);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserInfoEntity userInfoEntity = (UserInfoEntity) authentication.getPrincipal();
+
+        List<UserResponseVO> users = userService.getAllUsers(userInfoEntity.getRoleEnum(),userInfoEntity.getState(),
+                userInfoEntity.getDistrict());
 
         ApiResponse<List<UserResponseVO>> response = ApiResponse.<List<UserResponseVO>>builder()
                 .data(users)

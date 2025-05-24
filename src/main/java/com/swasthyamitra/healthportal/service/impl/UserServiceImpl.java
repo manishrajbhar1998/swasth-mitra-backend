@@ -17,7 +17,6 @@ import com.swasthyamitra.healthportal.service.EmailService;
 import com.swasthyamitra.healthportal.service.UserService;
 import com.swasthyamitra.healthportal.utils.CommonUtils;
 import com.swasthyamitra.healthportal.utils.ValidationUtils;
-import io.micrometer.common.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -71,16 +70,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserResponseVO> getAllUsers(String role) {
+    public List<UserResponseVO> getAllUsers(RoleEnum role, String state, String district) {
         List<UserInfoEntity> userInfoEntities;
 
-        if (StringUtils.isBlank(role)) {
+        RoleEnum roleEnum = CommonUtils.toValidRole("USER");
+
+        if ("SUPER_ADMIN".equalsIgnoreCase(role.toString())) {
             // No role filter — fetch all
             userInfoEntities = userInfoRepository.findAll();
+        } else if ("STATE_ADMIN".equalsIgnoreCase(role.toString())) {
+            userInfoEntities = userInfoRepository.findByRoleEnumAndState(roleEnum, state);
         } else {
-            // Validate role, then fetch filtered users
-            RoleEnum roleEnum = CommonUtils.toValidRole(role);
-            userInfoEntities = userInfoRepository.findByRoleEnum(roleEnum);
+            userInfoEntities = userInfoRepository.findByRoleEnumAndStateAndDistrict(roleEnum, state, district);
         }
 
         return userInfoEntities.stream()
@@ -157,7 +158,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void resetPassword(String token, String password) {
 
-       TokenLogEntity tokenLog = verifyTokenForResetPassword(token);
+        TokenLogEntity tokenLog = verifyTokenForResetPassword(token);
 
         UserInfoEntity userInfoEntity = userInfoRepository.findById(tokenLog.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + tokenLog.getUserId()));
@@ -177,8 +178,8 @@ public class UserServiceImpl implements UserService {
         TokenLogEntity tokenLog = tokenLogO.get();
 
         this.setTokenLogAttempted(tokenLog);
-            if (tokenLog.getIsValid() != 1 || tokenLog.getExpiredAt().isBefore(OffsetDateTime.now())) {
-                throw new ExpiredTokenException("Link has been expired or invalid");
+        if (tokenLog.getIsValid() != 1 || tokenLog.getExpiredAt().isBefore(OffsetDateTime.now())) {
+            throw new ExpiredTokenException("Link has been expired or invalid");
 
         }
 
@@ -195,7 +196,7 @@ public class UserServiceImpl implements UserService {
 
     private String createForgotPasswordResetLog(UUID id, String email) {
 
-        Optional<TokenLogEntity> tokenLog = tokenLogRepository.findFirstByUserIdAndIsValid(id,1);
+        Optional<TokenLogEntity> tokenLog = tokenLogRepository.findFirstByUserIdAndIsValid(id, 1);
 
         if (tokenLog.isPresent()) {
             TokenLogEntity tokenLog1 = tokenLog.get();

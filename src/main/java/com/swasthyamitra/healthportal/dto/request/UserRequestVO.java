@@ -1,5 +1,6 @@
 package com.swasthyamitra.healthportal.dto.request;
 
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -57,4 +58,7 @@ public class UserRequestVO {
 
     @NotBlank(message = "State is required.")
     private String state;
+
+    @NotBlank(message = "District is required.")
+    private String district;
 }

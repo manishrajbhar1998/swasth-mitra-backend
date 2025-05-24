@@ -4,8 +4,12 @@ import com.swasthyamitra.healthportal.entity.EnquiryEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Repository
 public interface EnquiryRepository extends JpaRepository<EnquiryEntity, UUID> {
+    List<EnquiryEntity> findByState(String state);
+
+    List<EnquiryEntity> findByStateAndDistrict(String state, String district);
 }

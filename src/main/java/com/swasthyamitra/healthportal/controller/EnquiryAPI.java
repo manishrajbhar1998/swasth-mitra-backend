@@ -3,12 +3,15 @@ package com.swasthyamitra.healthportal.controller;
 import com.swasthyamitra.healthportal.dto.request.EnquiryRequestVO;
 import com.swasthyamitra.healthportal.dto.response.ApiResponse;
 import com.swasthyamitra.healthportal.dto.response.EnquiryResponseVO;
+import com.swasthyamitra.healthportal.entity.UserInfoEntity;
 import com.swasthyamitra.healthportal.service.EnquiryService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,7 +46,11 @@ public class EnquiryAPI {
     public ResponseEntity<ApiResponse<List<EnquiryResponseVO>>> getAllEnquiries() {
         log.info("Fetching all enquiries...");
 
-        List<EnquiryResponseVO> enquiries = enquiryService.getAllEnquiries();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserInfoEntity userInfoEntity = (UserInfoEntity) authentication.getPrincipal();
+
+        List<EnquiryResponseVO> enquiries = enquiryService.getAllEnquiries(userInfoEntity.getRoleEnum(),userInfoEntity.getState(),
+                userInfoEntity.getDistrict());
 
         ApiResponse<List<EnquiryResponseVO>> response = ApiResponse.<List<EnquiryResponseVO>>builder()
                 .data(enquiries)

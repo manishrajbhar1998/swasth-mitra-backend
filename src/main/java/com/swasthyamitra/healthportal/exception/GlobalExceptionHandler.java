@@ -75,7 +75,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
-
     private record ErrorResponse(int status, String message, List<String> errors) {
     }
 

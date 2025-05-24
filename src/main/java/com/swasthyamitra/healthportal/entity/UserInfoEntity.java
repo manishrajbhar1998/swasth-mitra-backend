@@ -1,7 +1,6 @@
 package com.swasthyamitra.healthportal.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.swasthyamitra.healthportal.enums.RoleEnum;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -79,6 +78,9 @@ public class UserInfoEntity extends BaseEntity implements UserDetails {
 
     @Column(name = "STATE")
     private String state;
+
+    @Column(name = "DISTRICT")
+    private String district;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -4,8 +4,11 @@ import com.swasthyamitra.healthportal.dto.request.EnquiryRequestVO;
 import com.swasthyamitra.healthportal.dto.response.EnquiryResponseVO;
 import com.swasthyamitra.healthportal.entity.EnquiryEntity;
 import static com.swasthyamitra.healthportal.mapper.CommonMapper.mapper;
+
+import com.swasthyamitra.healthportal.enums.RoleEnum;
 import com.swasthyamitra.healthportal.repository.EnquiryRepository;
 import com.swasthyamitra.healthportal.service.EnquiryService;
+import com.swasthyamitra.healthportal.utils.CommonUtils;
 import com.swasthyamitra.healthportal.utils.ValidationUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,10 +41,19 @@ public class EnquiryServiceImpl implements EnquiryService {
     }
 
     @Override
-    public List<EnquiryResponseVO> getAllEnquiries() {
+    public List<EnquiryResponseVO> getAllEnquiries(RoleEnum role, String state, String district) {
         log.info("Fetching all enquiries from the database...");
 
-        List<EnquiryEntity> enquiryEntities = enquiryRepository.findAll();
+        List<EnquiryEntity> enquiryEntities;
+
+        if ("SUPER_ADMIN".equalsIgnoreCase(role.toString())) {
+            // No role filter — fetch all
+             enquiryEntities = enquiryRepository.findAll();
+        } else if ("STATE_ADMIN".equalsIgnoreCase(role.toString())) {
+            enquiryEntities = enquiryRepository.findByState(state);
+        } else {
+            enquiryEntities = enquiryRepository.findByStateAndDistrict(state, district);
+        }
 
         log.info("Total enquiries fetched: {}", enquiryEntities.size());
         return enquiryEntities.stream()

@@ -1,7 +1,5 @@
 package com.swasthyamitra.healthportal.confg;
 
-
-
 import com.swasthyamitra.healthportal.entity.UserInfoEntity;
 import com.swasthyamitra.healthportal.repository.TokenRepository;
 import com.swasthyamitra.healthportal.repository.UserInfoRepository;
