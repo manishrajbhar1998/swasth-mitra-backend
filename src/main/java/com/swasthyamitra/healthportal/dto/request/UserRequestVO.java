@@ -43,4 +43,7 @@ public class UserRequestVO {
     private String patientHistory;
 
     private String existingDiseases;
+
+    @NotBlank(message = "Password is required.")
+    private String password;
 }

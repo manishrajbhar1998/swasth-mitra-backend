@@ -52,11 +52,10 @@ public class UserServiceImpl implements UserService {
         if (userInfoRepository.existsByEmail(userRequestVO.getEmail())) {
             throw new UserExistsException("Email already registered: " + userRequestVO.getEmail());
         }
-        String password = CommonUtils.generateDummyPassword();
         UserInfoEntity userInfoEntity = mapper.convertUserRequestToUserInfoEntity(userRequestVO);
         userInfoEntity.setEmail(userRequestVO.getEmail());
-        userInfoEntity.setPassword(password);
-        userInfoEntity.setEncodedPassword(CommonUtils.hashPassword(password));
+        userInfoEntity.setPassword(userRequestVO.getPassword());
+        userInfoEntity.setEncodedPassword(CommonUtils.hashPassword(userRequestVO.getPassword()));
 
         userInfoRepository.save(userInfoEntity);
         return mapper.convertUserInfoEntityToUserResponse(userInfoEntity);
