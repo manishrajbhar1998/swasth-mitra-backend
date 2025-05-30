@@ -40,5 +40,11 @@ public class EnquiryEntity extends BaseEntity{
 
     @Column(name = "PIN_CODE")
     private String pinCode;
+
+    @Column(name = "STATUS")
+    private String status;
+
+    @Column(name = "IS_EDITABLE")
+    private boolean isEditable = true;
 }
 

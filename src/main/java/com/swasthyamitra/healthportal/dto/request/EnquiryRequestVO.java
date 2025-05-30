@@ -4,6 +4,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
+import java.util.UUID;
+
 @Data
 public class EnquiryRequestVO
 {
@@ -28,4 +30,7 @@ public class EnquiryRequestVO
     private String pinCode;
     private String createdBy;
     private String updatedBy;
+    private UUID followUpUUID;
+    private String status;
+
 }

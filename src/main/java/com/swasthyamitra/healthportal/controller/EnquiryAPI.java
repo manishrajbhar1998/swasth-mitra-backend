@@ -15,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/enquiry")
@@ -55,6 +56,38 @@ public class EnquiryAPI {
         ApiResponse<List<EnquiryResponseVO>> response = ApiResponse.<List<EnquiryResponseVO>>builder()
                 .data(enquiries)
                 .message("Enquiries fetched successfully.")
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping(value = "/update/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse<EnquiryResponseVO>> updateEnquiry(
+            @PathVariable("id") UUID enquiryId,
+            @Valid @RequestBody EnquiryRequestVO enquiryRequest) {
+
+        log.info("Updating enquiry with ID: {}", enquiryId);
+
+        EnquiryResponseVO updatedResponse = enquiryService.updateEnquiry(enquiryId, enquiryRequest);
+
+        ApiResponse<EnquiryResponseVO> response = ApiResponse.<EnquiryResponseVO>builder()
+                .data(updatedResponse)
+                .message("Enquiry updated successfully.")
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse<EnquiryResponseVO>> getEnquiryById(@PathVariable("id") UUID enquiryId) {
+
+        log.info("Fetching enquiry with ID: {}", enquiryId);
+
+        EnquiryResponseVO enquiryResponse = enquiryService.getEnquiryById(enquiryId);
+
+        ApiResponse<EnquiryResponseVO> response = ApiResponse.<EnquiryResponseVO>builder()
+                .data(enquiryResponse)
+                .message("Enquiry fetched successfully.")
                 .build();
 
         return ResponseEntity.ok(response);

@@ -17,4 +17,10 @@ public class EnquiryResponseVO  {
     private String state;
     private String country;
     private String pinCode;
+    private String status;
+    private UUID followUpUUID;
+    private String followUpBy;
+    private String createdAt;
+    private String updatedAt;
+    private boolean isEditable;
 }

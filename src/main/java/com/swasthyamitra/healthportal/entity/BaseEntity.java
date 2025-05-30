@@ -34,6 +34,10 @@ public class BaseEntity implements Serializable {
     @Column(name = "IS_DELETED")
     private boolean isDeleted = false;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CREATED_BY_UUID", referencedColumnName = "ID" , insertable = false , updatable = false)
+    public UserInfoEntity userInfo;
+
     @PrePersist
     protected void onCreate() {
 

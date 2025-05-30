@@ -23,6 +23,10 @@ public interface CommonMapper {
 
     EnquiryEntity convertEnquiryRequestToEnquiryEntity(EnquiryRequestVO enquiryRequest);
 
+    @Mapping(source = "createdByUUID", target = "followUpUUID")
+    @Mapping(source = "userInfo", target = "followUpBy", qualifiedByName = "mapFullName")
+    @Mapping(source = "createdAt", target = "createdAt", dateFormat = "yyyy-MM-dd'T'HH:mm:ss")
+    @Mapping(source = "updatedAt", target = "updatedAt", dateFormat = "yyyy-MM-dd'T'HH:mm:ss")
     EnquiryResponseVO convertEnquiryEntityToEnquiryResponse(EnquiryEntity savedEnquiry);
 
     @Mapping(target = "roleEnum", expression = "java(CommonUtils.toValidRole(userRequestVO.getRole()))")
@@ -46,5 +50,13 @@ public interface CommonMapper {
     @Named("dateToStringSafe")
     static String dateToStringSafe(Date date) {
         return DateUtils.dateToString(date);
+    }
+
+    @Named("mapFullName")
+    static String mapFullName(UserInfoEntity userInfo) {
+        if (userInfo == null) return null;
+        String firstName = userInfo.getFirstName() != null ? userInfo.getFirstName() : "";
+        String lastName = userInfo.getLastName() != null ? userInfo.getLastName() : "";
+        return (firstName + " " + lastName).trim();
     }
 }
