@@ -2,10 +2,13 @@ package com.swasthyamitra.healthportal.mapper;
 
 
 import com.swasthyamitra.healthportal.dto.request.EnquiryRequestVO;
+import com.swasthyamitra.healthportal.dto.request.PlanPurchaseRequestDTO;
 import com.swasthyamitra.healthportal.dto.request.UserRequestVO;
 import com.swasthyamitra.healthportal.dto.response.EnquiryResponseVO;
+import com.swasthyamitra.healthportal.dto.response.PlanPurchaseResponseDTO;
 import com.swasthyamitra.healthportal.dto.response.UserResponseVO;
 import com.swasthyamitra.healthportal.entity.EnquiryEntity;
+import com.swasthyamitra.healthportal.entity.PlanPurchaseEntity;
 import com.swasthyamitra.healthportal.entity.UserInfoEntity;
 import com.swasthyamitra.healthportal.utils.CommonUtils;
 import com.swasthyamitra.healthportal.utils.DateUtils;
@@ -54,9 +57,12 @@ public interface CommonMapper {
 
     @Named("mapFullName")
     static String mapFullName(UserInfoEntity userInfo) {
-        if (userInfo == null) return null;
-        String firstName = userInfo.getFirstName() != null ? userInfo.getFirstName() : "";
-        String lastName = userInfo.getLastName() != null ? userInfo.getLastName() : "";
-        return (firstName + " " + lastName).trim();
+        return null;
     }
+
+    @Mapping(target = "profilePic", ignore = true)
+    PlanPurchaseEntity convertPlanPurchaseRequesToPlanPurchaseEntity(PlanPurchaseRequestDTO requestDTO);
+
+    @Mapping(source = "createdAt", target = "createdAt", dateFormat = "yyyy-MM-dd'T'HH:mm:ss")
+    PlanPurchaseResponseDTO convertPlanPurchaseEntityToPlanPurchaseResponseDTO(PlanPurchaseEntity planPurchaseEntity);
 }
