@@ -63,7 +63,7 @@ public class CommonUtils {
 
     public static String generateMemberId() {
         String prefix = "SM";
-        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        String characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
         StringBuilder suffix = new StringBuilder();
 
         for (int i = 0; i < 6; i++) {
