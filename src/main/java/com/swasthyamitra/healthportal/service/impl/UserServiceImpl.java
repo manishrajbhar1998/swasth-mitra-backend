@@ -2,6 +2,7 @@ package com.swasthyamitra.healthportal.service.impl;
 
 import com.swasthyamitra.healthportal.dto.request.UserRequestVO;
 import com.swasthyamitra.healthportal.dto.response.UserResponseVO;
+import com.swasthyamitra.healthportal.entity.PlanPurchaseEntity;
 import com.swasthyamitra.healthportal.entity.TokenLogEntity;
 import com.swasthyamitra.healthportal.entity.UserInfoEntity;
 
@@ -11,6 +12,7 @@ import com.swasthyamitra.healthportal.enums.RoleEnum;
 import com.swasthyamitra.healthportal.exception.ExpiredTokenException;
 import com.swasthyamitra.healthportal.exception.ResourceNotFoundException;
 import com.swasthyamitra.healthportal.exception.UserExistsException;
+import com.swasthyamitra.healthportal.repository.PlanPurchaseRepository;
 import com.swasthyamitra.healthportal.repository.TokenLogRepository;
 import com.swasthyamitra.healthportal.repository.UserInfoRepository;
 import com.swasthyamitra.healthportal.service.EmailService;
@@ -36,15 +38,17 @@ public class UserServiceImpl implements UserService {
     private final UserInfoRepository userInfoRepository;
     private final TokenLogRepository tokenLogRepository;
     private final EmailService emailService;
+    private final PlanPurchaseRepository planPurchaseRepository;
 
     @Value("${app.otp.attempt}")
     Integer maxOtpAttempt;
 
     @Autowired
-    public UserServiceImpl(UserInfoRepository userInfoRepository, TokenLogRepository tokenLogRepository, EmailService emailService) {
+    public UserServiceImpl(UserInfoRepository userInfoRepository, TokenLogRepository tokenLogRepository, EmailService emailService, PlanPurchaseRepository planPurchaseRepository) {
         this.userInfoRepository = userInfoRepository;
         this.tokenLogRepository = tokenLogRepository;
         this.emailService = emailService;
+        this.planPurchaseRepository = planPurchaseRepository;
     }
 
     @Override
@@ -78,7 +82,7 @@ public class UserServiceImpl implements UserService {
 
         if ("SUPER_ADMIN".equalsIgnoreCase(authorizeRole.toString())) {
             // No role filter — fetch all
-            RoleEnum superAdminRole = CommonUtils.toValidRole(filterRole);
+            RoleEnum superAdminRole = CommonUtils.toValidRole(authorizeRole.toString());
             userInfoEntities = userInfoRepository.findByRoleEnum(superAdminRole);
         } else if ("STATE_ADMIN".equalsIgnoreCase(authorizeRole.toString())) {
             userInfoEntities = userInfoRepository.findByRoleEnumAndState(roleEnum, state);
@@ -89,8 +93,20 @@ public class UserServiceImpl implements UserService {
         }
 
         return userInfoEntities.stream()
-                .map(mapper::convertUserInfoEntityToUserResponse)
+                .map(user -> {
+                    UserResponseVO userResponseVO = mapper.convertUserInfoEntityToUserResponse(user);
+
+                    String memberId = planPurchaseRepository
+                            .findByUserId(user.getId()) // or any logic
+                            .map(PlanPurchaseEntity::getMemberId)
+                            .orElse(null);
+
+                    userResponseVO.setMemberId(memberId);
+
+                    return userResponseVO;
+                })
                 .toList();
+
     }
 
     @Override

@@ -59,4 +59,17 @@ public class CommonUtils {
         randomString = randomString.replace("/", "").replace("\\", "");
         return randomString;
     }
+
+
+    public static String generateMemberId() {
+        String prefix = "SM";
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        StringBuilder suffix = new StringBuilder();
+
+        for (int i = 0; i < 6; i++) {
+            suffix.append(characters.charAt(random.nextInt(characters.length())));
+        }
+
+        return prefix + suffix.toString(); // Total 8 characters
+    }
 }

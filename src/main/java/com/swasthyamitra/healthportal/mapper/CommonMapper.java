@@ -17,6 +17,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 @Mapper(componentModel = "spring",imports = CommonUtils.class)
@@ -64,5 +65,11 @@ public interface CommonMapper {
     PlanPurchaseEntity convertPlanPurchaseRequesToPlanPurchaseEntity(PlanPurchaseRequestDTO requestDTO);
 
     @Mapping(source = "createdAt", target = "createdAt", dateFormat = "yyyy-MM-dd'T'HH:mm:ss")
+    @Mapping(target = "planExpiryDate", expression = "java(formatDate(planPurchaseEntity.getPlanExpiryDate()))")
     PlanPurchaseResponseDTO convertPlanPurchaseEntityToPlanPurchaseResponseDTO(PlanPurchaseEntity planPurchaseEntity);
+
+    default String formatDate(Timestamp timestamp) {
+        if (timestamp == null) return null;
+        return new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(timestamp);
+    }
 }

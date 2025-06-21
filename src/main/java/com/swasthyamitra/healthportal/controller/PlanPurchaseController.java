@@ -15,6 +15,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/plan-purchase")
@@ -44,7 +46,8 @@ public class PlanPurchaseController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse<PlanPurchaseResponseDTO>> getUserPlanPurchase() {
+    public ResponseEntity<ApiResponse<PlanPurchaseResponseDTO>> getUserPlanPurchase(@RequestParam(required = false)
+                                                                                    UUID userId) {
 
         log.info("Fetching plan purchase for logged-in user.");
 
@@ -63,14 +66,16 @@ public class PlanPurchaseController {
 
     @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<PlanPurchaseResponseDTO>> updateUserPlanPurchase(
-            @Valid @ModelAttribute PlanPurchaseRequestDTO requestDTO) throws IOException {
+            @Valid @ModelAttribute PlanPurchaseRequestDTO requestDTO, @RequestParam(required = false) UUID userId) throws IOException {
 
         log.info("Updating plan purchase for logged-in user.");
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserInfoEntity userInfoEntity = (UserInfoEntity) authentication.getPrincipal();
 
-        PlanPurchaseResponseDTO responseDTO = planPurchaseService.updatePlanPurchase(requestDTO, userInfoEntity.getId());
+        UUID updateUserId = userId != null ? userId : userInfoEntity.getId();
+
+        PlanPurchaseResponseDTO responseDTO = planPurchaseService.updatePlanPurchase(requestDTO, updateUserId);
 
         ApiResponse<PlanPurchaseResponseDTO> response = ApiResponse.<PlanPurchaseResponseDTO>builder()
                 .data(responseDTO)
@@ -80,5 +85,21 @@ public class PlanPurchaseController {
         return ResponseEntity.ok(response);
     }
 
+
+    @GetMapping(value = "all", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse<List<PlanPurchaseResponseDTO>>> getUserPlanPurchase(@RequestParam(required = false)
+                                                                                          String memberId) {
+
+        log.info("Fetching plan purchases for user: {}", memberId);
+
+        List<PlanPurchaseResponseDTO> responseDTO = planPurchaseService.getPlanPurchaseByMemberId(memberId);
+
+        ApiResponse<List<PlanPurchaseResponseDTO>> response = ApiResponse.<List<PlanPurchaseResponseDTO>>builder()
+                .data(responseDTO)
+                .message("Plan purchases fetched successfully.")
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
 
 }

@@ -41,4 +41,6 @@ public class UserResponseVO {
     private String state;
 
     private String district;
+
+    private String memberId;
 }
