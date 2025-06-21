@@ -1,7 +1,7 @@
 package com.swasthyamitra.healthportal.controller;
 
-import com.swasthyamitra.healthportal.exception.InvalidInputException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -9,42 +9,62 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @RestController
 @RequestMapping("/api/files")
 @Slf4j
 public class FileUploadController {
 
-    // Local file system path on the server
-    private static final String UPLOAD_DIR = "F:/SwasthyaMitra/";
-
-    // Public base URL for accessing files
-    private static final String BASE_URL = "https://swasthmitra.in/custom_assets/";
-
     @PostMapping("/upload")
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
-        String fileName = file.getOriginalFilename();
-        Path filePath = Paths.get(BASE_URL, fileName);
-
         try {
-            // Ensure directory exists
-            File dir = new File(BASE_URL);
-            if (!dir.exists() && dir.mkdirs()) {
-                log.info("Created upload directory at {}", BASE_URL);
+            // Detect OS to choose correct upload path
+            String os = System.getProperty("os.name").toLowerCase();
+            String uploadDirPath;
+
+            if (os.contains("win")) {
+                // For Windows - relative to project folder
+                    uploadDirPath = new File("custom_assets").getAbsolutePath();
+            } else {
+                // For Linux - absolute path (served by Nginx)
+                uploadDirPath = "/var/www/html/custom_assets";
             }
 
-            // Save file
-            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-            log.info("File '{}' uploaded successfully to {}", fileName, filePath);
+            // Ensure directory exists
+            File uploadDir = new File(uploadDirPath);
+            if (!uploadDir.exists() && uploadDir.mkdirs()) {
+                log.info("Created upload directory at {}", uploadDirPath);
+            }
 
-            // Build and return the public URL
-            String fileUrl = BASE_URL + fileName;
+            // Extract original extension
+            String originalFilename = file.getOriginalFilename();
+            String extension = "";
+
+            if (originalFilename != null && originalFilename.contains(".")) {
+                extension = originalFilename.substring(originalFilename.lastIndexOf('.'));
+            }
+
+            // Generate unique filename with timestamp
+            String timestamp = new SimpleDateFormat("ddMMMyyyy_HHmmss").format(new Date());
+            String newFileName = timestamp + extension;
+
+            // Save file to target path
+            Path filePath = Paths.get(uploadDirPath, newFileName);
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            log.info("File '{}' uploaded successfully to {}", newFileName, filePath);
+
+            // Build public URL
+            String baseUrl = os.contains("win") ? "http://localhost:8080" : "https://swasthmitra.in";
+            String fileUrl = baseUrl + "/custom_assets/" + newFileName;
+
             return ResponseEntity.ok(fileUrl);
 
         } catch (IOException e) {
-            log.error("Failed to upload file '{}': {}", fileName, e.getMessage(), e);
-            throw new InvalidInputException("File upload failed: " + e.getMessage());
+            log.error("File upload failed", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Upload failed");
         }
     }
-}
 
+}
