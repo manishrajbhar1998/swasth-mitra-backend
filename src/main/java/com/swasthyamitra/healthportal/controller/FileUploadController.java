@@ -16,7 +16,7 @@ import java.nio.file.*;
 public class FileUploadController {
 
     // Local file system path on the server
-    private static final String UPLOAD_DIR = "/var/www/html/custom_assets/";
+    private static final String UPLOAD_DIR = "F:/SwasthyaMitra/";
 
     // Public base URL for accessing files
     private static final String BASE_URL = "https://swasthmitra.in/custom_assets/";
@@ -24,13 +24,13 @@ public class FileUploadController {
     @PostMapping("/upload")
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
         String fileName = file.getOriginalFilename();
-        Path filePath = Paths.get(UPLOAD_DIR, fileName);
+        Path filePath = Paths.get(BASE_URL, fileName);
 
         try {
             // Ensure directory exists
-            File dir = new File(UPLOAD_DIR);
+            File dir = new File(BASE_URL);
             if (!dir.exists() && dir.mkdirs()) {
-                log.info("Created upload directory at {}", UPLOAD_DIR);
+                log.info("Created upload directory at {}", BASE_URL);
             }
 
             // Save file
