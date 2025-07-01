@@ -52,7 +52,7 @@ public class UserAPI {
         UserInfoEntity userInfoEntity = (UserInfoEntity) authentication.getPrincipal();
 
         List<UserResponseVO> users = userService.getAllUsers(userInfoEntity.getRoleEnum(),userInfoEntity.getState(),
-                userInfoEntity.getDistrict(), role);
+                userInfoEntity.getDistrict(),userInfoEntity.getCity(), role);
 
         ApiResponse<List<UserResponseVO>> response = ApiResponse.<List<UserResponseVO>>builder()
                 .data(users)

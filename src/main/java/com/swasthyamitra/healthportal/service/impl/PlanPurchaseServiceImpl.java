@@ -58,10 +58,10 @@ public class PlanPurchaseServiceImpl implements PlanPurchaseService {
 
         FamilyMembersDTO updatedFamilyMembers = processFamilyMemberPhotos(requestDTO.getFamilyMembersDTO());
         planPurchaseEntity.setFamilyMembersDTO(updatedFamilyMembers);
+        planPurchaseEntity.setStatus("IN_ACTIVE");
 
         if (requestDTO.getPaymentStatus().equalsIgnoreCase("SUCCESS")) {
             planPurchaseEntity.setPlanExpiryDate(calculatePlanExpiryDate());
-            planPurchaseEntity.setStatus("ACTIVE");
         }
 
         planPurchaseRepository.save(planPurchaseEntity);
@@ -89,9 +89,10 @@ public class PlanPurchaseServiceImpl implements PlanPurchaseService {
         updatedEntity.setId(existingPlan.getId());
         updatedEntity.setMemberId(existingPlan.getMemberId());
         updatedEntity.setUserId(userId);
+        updatedEntity.setStatus("IN_ACTIVE");
+
         if (requestDTO.getPaymentStatus().equalsIgnoreCase("SUCCESS")) {
             updatedEntity.setPlanExpiryDate(calculatePlanExpiryDate());
-            updatedEntity.setStatus("ACTIVE");
         }
 
         // Only update image if new file is provided

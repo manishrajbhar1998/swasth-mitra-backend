@@ -10,6 +10,7 @@ import static com.swasthyamitra.healthportal.mapper.CommonMapper.mapper;
 
 import com.swasthyamitra.healthportal.enums.RoleEnum;
 import com.swasthyamitra.healthportal.exception.ExpiredTokenException;
+import com.swasthyamitra.healthportal.exception.InvalidInputException;
 import com.swasthyamitra.healthportal.exception.ResourceNotFoundException;
 import com.swasthyamitra.healthportal.exception.UserExistsException;
 import com.swasthyamitra.healthportal.repository.PlanPurchaseRepository;
@@ -24,6 +25,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -54,6 +58,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseVO addUser(UserRequestVO userRequestVO) {
 
+        if(userRequestVO.getPassword()==null || userRequestVO.getPassword().isEmpty()){
+            throw new InvalidInputException("Password is required");
+        }
+
         ValidationUtils.Cc(userRequestVO);
 
         if (userInfoRepository.existsByEmail(userRequestVO.getEmail())) {
@@ -75,32 +83,44 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserResponseVO> getAllUsers(RoleEnum authorizeRole, String state, String district, String filterRole) {
+    public List<UserResponseVO> getAllUsers(RoleEnum authorizeRole, String state, String district,String city, String filterRole) {
         List<UserInfoEntity> userInfoEntities;
 
-        RoleEnum roleEnum = CommonUtils.toValidRole("USER");
+        RoleEnum roleEnum = RoleEnum.valueOf(authorizeRole.toString().toUpperCase());
+        filterRole = (filterRole != null) ? filterRole.toUpperCase() : "";
 
-        if ("SUPER_ADMIN".equalsIgnoreCase(authorizeRole.toString())) {
-            // No role filter — fetch all
-            userInfoEntities = userInfoRepository.findAllByIsDeletedFalse();
-        } else if ("STATE_ADMIN".equalsIgnoreCase(authorizeRole.toString())) {
-            userInfoEntities = userInfoRepository.findByRoleEnumAndState(roleEnum, state);
-        } else if ("USER".equalsIgnoreCase(authorizeRole.toString())) {
-            userInfoEntities = new ArrayList<>();
-        }else {
-            userInfoEntities = userInfoRepository.findByRoleEnumAndStateAndDistrict(roleEnum, state, district);
-        }
+        userInfoEntities = switch (roleEnum) {
+            case SUPER_ADMIN -> switch (filterRole) {
+                case "NOT_USER" -> userInfoRepository.findAllByRoleEnumNot(RoleEnum.USER);
+                case "USER" -> userInfoRepository.findAllByRoleEnum(RoleEnum.USER);
+                case "" -> userInfoRepository.findAllByIsDeletedFalse();
+                default -> new ArrayList<>();
+            };
+            case STATE_ADMIN -> userInfoRepository.findByRoleEnumAndState(RoleEnum.USER, state);
+            case TEAM_LEADS -> userInfoRepository.findByRoleEnumAndStateAndDistrictAndCity(RoleEnum.USER, state,district, city);
+            case USER -> new ArrayList<>();
+            default -> userInfoRepository.findByRoleEnumAndStateAndDistrict(RoleEnum.USER, state, district);
+        };
+
 
         return userInfoEntities.stream()
                 .map(user -> {
                     UserResponseVO userResponseVO = mapper.convertUserInfoEntityToUserResponse(user);
 
-                    String memberId = planPurchaseRepository
+                    PlanPurchaseEntity planPurchaseEntity = planPurchaseRepository
                             .findByUserId(user.getId()) // or any logic
-                            .map(PlanPurchaseEntity::getMemberId)
                             .orElse(null);
 
-                    userResponseVO.setMemberId(memberId);
+                    if(planPurchaseEntity != null){
+                        userResponseVO.setMemberId(planPurchaseEntity.getMemberId());
+                        userResponseVO.setPlan(planPurchaseEntity.getPlan());
+                        userResponseVO.setPaymentStatus(planPurchaseEntity.getPaymentStatus());
+                        userResponseVO.setStatus(
+                                userResponseVO.getRole().equalsIgnoreCase("USER")
+                                        ? planPurchaseEntity.getStatus()
+                                        : (user.isDeleted() ? "ACTIVE" : "IN_ACTIVE")
+                        );                        userResponseVO.setPlanExpiryDate(formatDate(planPurchaseEntity.getPlanExpiryDate()));
+                    }
 
                     return userResponseVO;
                 })
@@ -108,13 +128,33 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    private String formatDate(Timestamp timestamp) {
+        if (timestamp == null) return null;
+        return new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(timestamp);
+    }
+
     @Override
     public UserResponseVO getUserById(UUID id) {
         UserInfoEntity user = userInfoRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + id));
 
-        return mapper.convertUserInfoEntityToUserResponse(user);
-    }
+        PlanPurchaseEntity planPurchaseEntity = planPurchaseRepository
+                .findByUserId(user.getId()) // or any logic
+                .orElse(null);
+
+        UserResponseVO userResponseVO = mapper.convertUserInfoEntityToUserResponse(user);
+
+        if(planPurchaseEntity != null){
+            userResponseVO.setMemberId(planPurchaseEntity.getMemberId());
+            userResponseVO.setPlan(planPurchaseEntity.getPlan());
+            userResponseVO.setPaymentStatus(planPurchaseEntity.getPaymentStatus());
+            userResponseVO.setStatus(
+                    userResponseVO.getRole().equalsIgnoreCase("USER")
+                            ? planPurchaseEntity.getStatus()
+                            : (user.isDeleted() ? "ACTIVE" : "IN_ACTIVE")
+            );                        userResponseVO.setPlanExpiryDate(formatDate(planPurchaseEntity.getPlanExpiryDate()));
+        }
+        return userResponseVO;    }
 
     @Override
     public UserResponseVO updateUser(UUID id, UserRequestVO userRequestVO) {
@@ -137,12 +177,53 @@ public class UserServiceImpl implements UserService {
 
         UserInfoEntity userInfoEntity = mapper.convertUserRequestToUserInfoEntity(userRequestVO);
         userInfoEntity.setEmail(userRequestVO.getEmail());
+        userInfoEntity.setPassword(user.getPassword());
+        userInfoEntity.setEncodedPassword(user.getEncodedPassword());
+        userInfoEntity.setCreatedBy(userInfoEntity.getCreatedBy());
         userInfoEntity.setUpdatedBy(userRequestVO.getUpdatedBy());
+        userInfoEntity.setUpdatedAt(Timestamp.from(Instant.now()));
         userInfoEntity.setId(user.getId());
+
+        boolean isUser = userRequestVO.getRole().equalsIgnoreCase("USER");
+        boolean isActive = userRequestVO.getStatus().equalsIgnoreCase("ACTIVE");
+
+        if (isUser) {
+            PlanPurchaseEntity planPurchaseEntity = planPurchaseRepository.findByUserId(userInfoEntity.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Plan not found for user: " + userInfoEntity.getId()));
+
+            LocalDate expiryDate = planPurchaseEntity.getPlanExpiryDate().toLocalDateTime().toLocalDate();
+            LocalDate today = LocalDate.now();
+
+            if (!"SUCCESS".equalsIgnoreCase(planPurchaseEntity.getPaymentStatus()) ||
+                    expiryDate.isBefore(today)) {
+
+                throw new InvalidInputException("Your plan is either unpaid or has expired. Please renew your subscription.");
+            }
+            planPurchaseEntity.setStatus(isActive ? "ACTIVE" : "IN_ACTIVE");
+            planPurchaseRepository.save(planPurchaseEntity);
+        } else {
+            userInfoEntity.setDeleted(isActive);
+        }
 
         userInfoRepository.save(userInfoEntity);
 
-        return mapper.convertUserInfoEntityToUserResponse(userInfoEntity);
+        PlanPurchaseEntity planPurchaseEntity = planPurchaseRepository
+                .findByUserId(user.getId()) // or any logic
+                .orElse(null);
+
+        UserResponseVO userResponseVO = mapper.convertUserInfoEntityToUserResponse(userInfoEntity);
+
+        if(planPurchaseEntity != null){
+            userResponseVO.setMemberId(planPurchaseEntity.getMemberId());
+            userResponseVO.setPlan(planPurchaseEntity.getPlan());
+            userResponseVO.setPaymentStatus(planPurchaseEntity.getPaymentStatus());
+            userResponseVO.setStatus(
+                    userResponseVO.getRole().equalsIgnoreCase("USER")
+                            ? planPurchaseEntity.getStatus()
+                            : (user.isDeleted() ? "ACTIVE" : "IN_ACTIVE")
+            );                        userResponseVO.setPlanExpiryDate(formatDate(planPurchaseEntity.getPlanExpiryDate()));
+        }
+        return userResponseVO;
     }
 
     @Override

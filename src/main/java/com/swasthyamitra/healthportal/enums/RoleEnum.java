@@ -5,6 +5,7 @@ public enum RoleEnum {
     STATE_ADMIN,       // State-level access
     DISTRICT_ADMIN,    // District-level access
     DISTRIBUTOR_ADMIN, // Block-level access
-    EMPLOYEE,         // General employee role with limited or custom access
+    EMPLOYEE,
+    TEAM_LEADS,
     USER
 }

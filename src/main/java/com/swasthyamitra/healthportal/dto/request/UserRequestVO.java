@@ -1,6 +1,5 @@
 package com.swasthyamitra.healthportal.dto.request;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -40,13 +39,6 @@ public class UserRequestVO {
     @NotBlank(message = "Pin code is required.")
     private String pinCode;
 
-    private String planSelection;
-
-    private String patientHistory;
-
-    private String existingDiseases;
-
-    @NotBlank(message = "Password is required.")
     private String password;
 
     private String createdBy;
@@ -61,4 +53,12 @@ public class UserRequestVO {
 
     @NotBlank(message = "District is required.")
     private String district;
+
+    private Boolean inquiryDetails = false;
+
+    private Boolean registeredUsers = false;
+
+    private Boolean manageAdmin = false;
+
+    private String status;
 }

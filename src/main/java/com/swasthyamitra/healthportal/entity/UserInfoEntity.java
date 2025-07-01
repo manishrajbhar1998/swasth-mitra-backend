@@ -61,17 +61,8 @@ public class UserInfoEntity extends BaseEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     private RoleEnum roleEnum;
 
-    @Column(name = "MARITAL_STATUS", nullable = false)
+    @Column(name = "MARITAL_STATUS")
     private String maritalStatus;
-
-    @Column(name = "PLAN_SELECTION", nullable = false)
-    private String planSelection;
-
-    @Column(name = "PATIENT_HISTORY")
-    private String patientHistory;
-
-    @Column(name = "EXISTING_DISEASES", nullable = false)
-    private String existingDiseases;
 
     @Column(name = "CITY")
     private String city;
@@ -81,6 +72,15 @@ public class UserInfoEntity extends BaseEntity implements UserDetails {
 
     @Column(name = "DISTRICT")
     private String district;
+
+    @Column(name = "INQUIRY_DETAILS")
+    private Boolean inquiryDetails = false;
+
+    @Column(name = "REGISTERED_USERS")
+    private Boolean registeredUsers = false;
+
+    @Column(name = "MANAGE_ADMIN")
+    private Boolean manageAdmin = false;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

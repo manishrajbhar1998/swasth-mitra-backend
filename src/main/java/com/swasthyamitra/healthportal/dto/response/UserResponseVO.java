@@ -30,12 +30,6 @@ public class UserResponseVO {
 
     private String pinCode;
 
-    private String planSelection;
-
-    private String patientHistory;
-
-    private String existingDiseases;
-
     private String city;
 
     private String state;
@@ -43,4 +37,26 @@ public class UserResponseVO {
     private String district;
 
     private String memberId;
+
+    private Boolean inquiryDetails;
+
+    private Boolean registeredUsers;
+
+    private Boolean manageAdmin;
+
+    private String plan;
+
+    private String planExpiryDate;
+
+    private String paymentStatus = "Plan Not Purchased";
+
+    private String status = "IN_ACTIVE";
+
+    private String createdAt;
+
+    private String updatedAt;
+
+    private String createdBy;
+
+    private String updatedBy;
 }

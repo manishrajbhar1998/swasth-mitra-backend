@@ -40,6 +40,8 @@ public interface CommonMapper {
 
     @Mapping(target = "role", source = "roleEnum")
     @Mapping(target = "dateOfBirth", source = "dateOfBirth", qualifiedByName = "dateToStringSafe")
+    @Mapping(source = "createdAt", target = "createdAt", dateFormat = "yyyy-MM-dd'T'HH:mm:ss")
+    @Mapping(source = "updatedAt", target = "updatedAt", dateFormat = "yyyy-MM-dd'T'HH:mm:ss")
     UserResponseVO convertUserInfoEntityToUserResponse(UserInfoEntity userInfoEntity);
 
     @Named("stringToDateSafe")
