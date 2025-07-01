@@ -11,13 +11,17 @@ import java.util.List;
 
 @Configuration
 public class CorsConfig {
+
     @Bean
-    public CorsConfigurationSource corsConfigurationSource(@Value("${app.cors.allowed-origins}") List<String> allowedOrigins) {
+    public CorsConfigurationSource corsConfigurationSource(
+            @Value("${app.cors.allowed-origins}") List<String> allowedOrigins) {
+
         CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(allowedOrigins); // Exact match with no slashes
         configuration.setAllowCredentials(true);
-        configuration.setAllowedOrigins(allowedOrigins);
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
