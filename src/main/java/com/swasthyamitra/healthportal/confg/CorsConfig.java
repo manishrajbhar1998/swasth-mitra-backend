@@ -17,7 +17,7 @@ public class CorsConfig {
             @Value("${app.cors.allowed-origins}") List<String> allowedOrigins) {
 
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOriginPattern("*");
+        configuration.setAllowedOrigins(allowedOrigins); // Exact match with no slashes
         configuration.setAllowCredentials(true);
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
