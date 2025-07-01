@@ -82,8 +82,7 @@ public class UserServiceImpl implements UserService {
 
         if ("SUPER_ADMIN".equalsIgnoreCase(authorizeRole.toString())) {
             // No role filter — fetch all
-            RoleEnum superAdminRole = CommonUtils.toValidRole(authorizeRole.toString());
-            userInfoEntities = userInfoRepository.findByRoleEnum(superAdminRole);
+            userInfoEntities = userInfoRepository.findAllByIsDeletedFalse();
         } else if ("STATE_ADMIN".equalsIgnoreCase(authorizeRole.toString())) {
             userInfoEntities = userInfoRepository.findByRoleEnumAndState(roleEnum, state);
         } else if ("USER".equalsIgnoreCase(authorizeRole.toString())) {
@@ -111,7 +110,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseVO getUserById(UUID id) {
-        UserInfoEntity user = userInfoRepository.findById(id)
+        UserInfoEntity user = userInfoRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + id));
 
         return mapper.convertUserInfoEntityToUserResponse(user);
@@ -122,7 +121,7 @@ public class UserServiceImpl implements UserService {
 
         ValidationUtils.Cc(userRequestVO);
 
-        UserInfoEntity user = userInfoRepository.findById(id)
+        UserInfoEntity user = userInfoRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + id));
         if (!user.getEmail().equalsIgnoreCase(userRequestVO.getEmail())) {
             if (userInfoRepository.existsByEmail(userRequestVO.getEmail())) {
