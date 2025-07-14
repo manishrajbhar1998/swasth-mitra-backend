@@ -32,5 +32,6 @@ public class EnquiryRequestVO
     private String updatedBy;
     private UUID followUpUUID;
     private String status;
+    private String userMsg;
 
 }

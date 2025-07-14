@@ -20,7 +20,7 @@ import org.mapstruct.factory.Mappers;
 import java.sql.Timestamp;
 import java.util.Date;
 
-@Mapper(componentModel = "spring",imports = CommonUtils.class)
+@Mapper(componentModel = "spring", imports = CommonUtils.class)
 public interface CommonMapper {
 
     CommonMapper mapper = Mappers.getMapper(CommonMapper.class);
@@ -60,8 +60,9 @@ public interface CommonMapper {
 
     @Named("mapFullName")
     static String mapFullName(UserInfoEntity userInfo) {
-        return null;
+        return userInfo == null ? "" : userInfo.getFirstName() + " " + userInfo.getLastName();
     }
+
 
     @Mapping(target = "profilePic", ignore = true)
     PlanPurchaseEntity convertPlanPurchaseRequesToPlanPurchaseEntity(PlanPurchaseRequestDTO requestDTO);

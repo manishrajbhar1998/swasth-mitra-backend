@@ -44,6 +44,9 @@ public class EnquiryEntity extends BaseEntity{
     @Column(name = "STATUS")
     private String status;
 
+    @Column(name = "USER_MSG")
+    private String userMsg;
+
     @Column(name = "IS_EDITABLE")
     private boolean isEditable = true;
 }

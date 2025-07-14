@@ -1,5 +1,6 @@
 package com.swasthyamitra.healthportal.dto.response;
 
+import com.swasthyamitra.healthportal.entity.UserInfoEntity;
 import com.swasthyamitra.healthportal.enums.RoleEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,18 +21,22 @@ public class JwtResponseVO {
     private String lastName;
     private UUID userId;
     private RoleEnum role;
-
     private String refreshToken;
+    private Boolean inquiryDetails = false;
+    private Boolean registeredUsers = false;
+    private Boolean manageAdmin = false;
 
-    public JwtResponseVO(String accessToken, String refreshToken, String username, UUID userId, RoleEnum role,
-                         String firstName, String lastName) {
+    public JwtResponseVO(String accessToken, String refreshToken, UserInfoEntity userInfoEntity, RoleEnum role) {
         this.accessToken = accessToken;
-        this.username = username;
-        this.userId = userId;
+        this.username = userInfoEntity.getUsername();
+        this.userId = userInfoEntity.getId();
         this.role = role;
         this.refreshToken = refreshToken;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.firstName = userInfoEntity.getFirstName();
+        this.lastName = userInfoEntity.getLastName();
+        this.inquiryDetails = userInfoEntity.getInquiryDetails();
+        this.registeredUsers = userInfoEntity.getRegisteredUsers();
+        this.manageAdmin = userInfoEntity.getManageAdmin();
     }
 }
 

@@ -74,8 +74,7 @@ public class LoginServiceImpl implements LoginService {
 
         RoleEnum roleEnum = userAuth.getRoleEnum();
 
-        return new JwtResponseVO(jwtToken, refreshToken, userAuth.getUsername(), userAuth.getId(), roleEnum,
-                userAuth.getFirstName(), userAuth.getLastName());
+        return new JwtResponseVO(jwtToken, refreshToken, userAuth, roleEnum);
     }
 
     @Override
