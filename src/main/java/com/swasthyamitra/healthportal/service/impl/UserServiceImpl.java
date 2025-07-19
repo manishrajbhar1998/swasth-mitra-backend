@@ -118,6 +118,7 @@ public class UserServiceImpl implements UserService {
         return userInfoEntities.stream()
                 .map(user -> {
                     UserResponseVO userResponseVO = mapper.convertUserInfoEntityToUserResponse(user);
+                    userResponseVO.setStatus(user.isDeleted() ? "IN_ACTIVE" : "ACTIVE");
 
                     PlanPurchaseEntity planPurchaseEntity = planPurchaseRepository
                             .findByUserId(user.getId()) // or any logic
@@ -130,7 +131,7 @@ public class UserServiceImpl implements UserService {
                         userResponseVO.setStatus(
                                 userResponseVO.getRole().equalsIgnoreCase("USER")
                                         ? planPurchaseEntity.getStatus()
-                                        : (user.isDeleted() ? "ACTIVE" : "IN_ACTIVE")
+                                        : (user.isDeleted() ? "IN_ACTIVE" : "ACTIVE")
                         );                        userResponseVO.setPlanExpiryDate(formatDate(planPurchaseEntity.getPlanExpiryDate()));
                     }
 
@@ -155,6 +156,7 @@ public class UserServiceImpl implements UserService {
                 .orElse(null);
 
         UserResponseVO userResponseVO = mapper.convertUserInfoEntityToUserResponse(user);
+        userResponseVO.setStatus(user.isDeleted() ? "IN_ACTIVE" : "ACTIVE");
 
         if(planPurchaseEntity != null){
             userResponseVO.setMemberId(planPurchaseEntity.getMemberId());
@@ -225,6 +227,7 @@ public class UserServiceImpl implements UserService {
                 .orElse(null);
 
         UserResponseVO userResponseVO = mapper.convertUserInfoEntityToUserResponse(userInfoEntity);
+        userResponseVO.setStatus(user.isDeleted() ? "IN_ACTIVE" : "ACTIVE");
 
         if(planPurchaseEntity != null){
             userResponseVO.setMemberId(planPurchaseEntity.getMemberId());
