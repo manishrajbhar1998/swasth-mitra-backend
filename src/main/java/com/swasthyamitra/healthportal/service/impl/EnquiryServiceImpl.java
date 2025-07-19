@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -45,7 +46,7 @@ public class EnquiryServiceImpl implements EnquiryService {
     }
 
     @Override
-    public List<EnquiryResponseVO> getAllEnquiries(RoleEnum role, String state, String district, String city) {
+    public List<EnquiryResponseVO> getAllEnquiries(RoleEnum role, String state, String district, String city ,Boolean delayedEnquiries) {
         log.info("Fetching all enquiries from the database...");
 
         List<EnquiryEntity> enquiryEntities;
@@ -61,6 +62,13 @@ public class EnquiryServiceImpl implements EnquiryService {
             enquiryEntities = new ArrayList<>();
         } else {
             enquiryEntities = enquiryRepository.findByStateIgnoreCaseAndDistrictIgnoreCase(state, district);
+        }
+
+        // Apply delayed enquiries filter
+        if (Boolean.TRUE.equals(delayedEnquiries)) {
+            enquiryEntities = enquiryEntities.stream()
+                    .filter(enquiry -> enquiry.getStatus() == null)
+                    .collect(Collectors.toList());
         }
 
         log.info("Total enquiries fetched: {}", enquiryEntities.size());

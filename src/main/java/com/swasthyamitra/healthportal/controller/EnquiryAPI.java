@@ -44,14 +44,16 @@ public class EnquiryAPI {
     }
 
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse<List<EnquiryResponseVO>>> getAllEnquiries() {
+    public ResponseEntity<ApiResponse<List<EnquiryResponseVO>>> getAllEnquiries(
+            @RequestParam(required = false) Boolean delayedEnquiries
+    ) {
         log.info("Fetching all enquiries...");
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserInfoEntity userInfoEntity = (UserInfoEntity) authentication.getPrincipal();
 
         List<EnquiryResponseVO> enquiries = enquiryService.getAllEnquiries(userInfoEntity.getRoleEnum(),userInfoEntity.getState(),
-                userInfoEntity.getDistrict(), userInfoEntity.getCity());
+                userInfoEntity.getDistrict(), userInfoEntity.getCity(), delayedEnquiries);
 
         ApiResponse<List<EnquiryResponseVO>> response = ApiResponse.<List<EnquiryResponseVO>>builder()
                 .data(enquiries)

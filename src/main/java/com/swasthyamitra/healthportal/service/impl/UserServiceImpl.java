@@ -135,7 +135,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseVO getUserById(UUID id) {
-        UserInfoEntity user = userInfoRepository.findByIdAndIsDeletedFalse(id)
+        UserInfoEntity user = userInfoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + id));
 
         PlanPurchaseEntity planPurchaseEntity = planPurchaseRepository
@@ -161,7 +161,7 @@ public class UserServiceImpl implements UserService {
 
         ValidationUtils.Cc(userRequestVO);
 
-        UserInfoEntity user = userInfoRepository.findByIdAndIsDeletedFalse(id)
+        UserInfoEntity user = userInfoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + id));
         if (!user.getEmail().equalsIgnoreCase(userRequestVO.getEmail())) {
             if (userInfoRepository.existsByEmail(userRequestVO.getEmail())) {

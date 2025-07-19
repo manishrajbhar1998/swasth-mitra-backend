@@ -10,7 +10,7 @@ import java.util.UUID;
 public interface EnquiryService {
     EnquiryResponseVO saveEnquiry(EnquiryRequestVO enquiryRequest);
 
-    List<EnquiryResponseVO> getAllEnquiries(RoleEnum role, String state, String district, String city);
+    List<EnquiryResponseVO> getAllEnquiries(RoleEnum role, String state, String district, String city ,Boolean delayedEnquiries);
 
     EnquiryResponseVO updateEnquiry(UUID enquiryId, EnquiryRequestVO enquiryRequest);
 
