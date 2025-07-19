@@ -68,11 +68,12 @@ public class AuthAPI {
 
         ValidationUtils.Cc(resetPasswordRequest);
 
-        userService.resetPassword(resetPasswordRequest.getToken(), resetPasswordRequest.getNewPassword());
+      String role = userService.resetPassword(resetPasswordRequest.getToken(), resetPasswordRequest.getNewPassword());
 
         return ResponseEntity.ok(
                 ApiResponse.<String>builder()
                         .message("Password has been reset successfully.")
+                        .data(role)  // 👈 Include role here
                         .build()
         );
     }

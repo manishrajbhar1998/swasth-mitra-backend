@@ -272,7 +272,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void resetPassword(String token, String password) {
+    public String resetPassword(String token, String password) {
 
         TokenLogEntity tokenLog = verifyTokenForResetPassword(token);
 
@@ -282,7 +282,7 @@ public class UserServiceImpl implements UserService {
         userInfoEntity.setPassword(password);
         userInfoEntity.setEncodedPassword(CommonUtils.hashPassword(password));
 
-        userInfoRepository.save(userInfoEntity);
+       return userInfoRepository.save(userInfoEntity).getRoleEnum().toString();
     }
 
 
