@@ -20,7 +20,6 @@ public class EnquiryRequestVO
     @NotBlank(message = "Mobile number is required.")
     private String mobileNo;
 
-    @NotBlank(message = "Address must not be empty.")
     private String address;
 
     private String city;

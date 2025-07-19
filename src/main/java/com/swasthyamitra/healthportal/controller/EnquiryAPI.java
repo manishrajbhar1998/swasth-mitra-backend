@@ -51,7 +51,7 @@ public class EnquiryAPI {
         UserInfoEntity userInfoEntity = (UserInfoEntity) authentication.getPrincipal();
 
         List<EnquiryResponseVO> enquiries = enquiryService.getAllEnquiries(userInfoEntity.getRoleEnum(),userInfoEntity.getState(),
-                userInfoEntity.getDistrict());
+                userInfoEntity.getDistrict(), userInfoEntity.getCity());
 
         ApiResponse<List<EnquiryResponseVO>> response = ApiResponse.<List<EnquiryResponseVO>>builder()
                 .data(enquiries)

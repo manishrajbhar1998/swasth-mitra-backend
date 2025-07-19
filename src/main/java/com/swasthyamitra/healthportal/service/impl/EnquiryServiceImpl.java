@@ -3,6 +3,7 @@ package com.swasthyamitra.healthportal.service.impl;
 import com.swasthyamitra.healthportal.dto.request.EnquiryRequestVO;
 import com.swasthyamitra.healthportal.dto.response.EnquiryResponseVO;
 import com.swasthyamitra.healthportal.entity.EnquiryEntity;
+
 import static com.swasthyamitra.healthportal.mapper.CommonMapper.mapper;
 
 import com.swasthyamitra.healthportal.enums.RoleEnum;
@@ -25,7 +26,7 @@ public class EnquiryServiceImpl implements EnquiryService {
     private final EnquiryRepository enquiryRepository;
 
     @Autowired
-    public EnquiryServiceImpl(EnquiryRepository enquiryRepository){
+    public EnquiryServiceImpl(EnquiryRepository enquiryRepository) {
         this.enquiryRepository = enquiryRepository;
     }
 
@@ -44,20 +45,22 @@ public class EnquiryServiceImpl implements EnquiryService {
     }
 
     @Override
-    public List<EnquiryResponseVO> getAllEnquiries(RoleEnum role, String state, String district) {
+    public List<EnquiryResponseVO> getAllEnquiries(RoleEnum role, String state, String district, String city) {
         log.info("Fetching all enquiries from the database...");
 
         List<EnquiryEntity> enquiryEntities;
 
         if ("SUPER_ADMIN".equalsIgnoreCase(role.toString())) {
             // No role filter — fetch all
-             enquiryEntities = enquiryRepository.findAll();
+            enquiryEntities = enquiryRepository.findAll();
         } else if ("STATE_ADMIN".equalsIgnoreCase(role.toString())) {
-            enquiryEntities = enquiryRepository.findByState(state);
-        }else if ("USER".equalsIgnoreCase(role.toString())) {
+            enquiryEntities = enquiryRepository.findByStateIgnoreCase(state);
+        } else if ("TEAM_LEADS".equalsIgnoreCase(role.toString())) {
+            enquiryEntities = enquiryRepository.findByStateIgnoreCaseAndDistrictIgnoreCaseAndCityIgnoreCase(state, district, city);
+        } else if ("USER".equalsIgnoreCase(role.toString())) {
             enquiryEntities = new ArrayList<>();
         } else {
-            enquiryEntities = enquiryRepository.findByStateAndDistrict(state, district);
+            enquiryEntities = enquiryRepository.findByStateIgnoreCaseAndDistrictIgnoreCase(state, district);
         }
 
         log.info("Total enquiries fetched: {}", enquiryEntities.size());

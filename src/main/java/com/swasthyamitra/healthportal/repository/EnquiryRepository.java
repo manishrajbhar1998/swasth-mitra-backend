@@ -9,7 +9,9 @@ import java.util.UUID;
 
 @Repository
 public interface EnquiryRepository extends JpaRepository<EnquiryEntity, UUID> {
-    List<EnquiryEntity> findByState(String state);
+    List<EnquiryEntity> findByStateIgnoreCase(String state);
 
-    List<EnquiryEntity> findByStateAndDistrict(String state, String district);
+    List<EnquiryEntity> findByStateIgnoreCaseAndDistrictIgnoreCase(String state, String district);
+
+    List<EnquiryEntity> findByStateIgnoreCaseAndDistrictIgnoreCaseAndCityIgnoreCase(String state, String district, String city);
 }
