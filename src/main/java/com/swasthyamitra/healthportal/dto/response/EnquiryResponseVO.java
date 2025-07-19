@@ -22,7 +22,6 @@ public class EnquiryResponseVO  {
     private String followUpBy;
     private String createdAt;
     private String updatedAt;
-    private boolean isEditable;
     private String userMsg;
 
 }

@@ -199,6 +199,7 @@ public class UserServiceImpl implements UserService {
         boolean isUser = userRequestVO.getRole().equalsIgnoreCase("USER");
         boolean isActive = userRequestVO.getStatus().equalsIgnoreCase("ACTIVE");
 
+
         if (isUser) {
             PlanPurchaseEntity planPurchaseEntity = planPurchaseRepository.findByUserId(userInfoEntity.getId())
                     .orElseThrow(() -> new ResourceNotFoundException("Plan not found for user: " + userInfoEntity.getId()));

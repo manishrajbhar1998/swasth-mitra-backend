@@ -7,7 +7,7 @@ public class ErrorMessageConstants {
     }
 
 
-    public static final String USER_NOT_FOUND = "User Info is not found";
+    public static final String USER_NOT_FOUND = "User does not exist or the account has been locked. Please contact to admin.";
     public static final String USER_NOT_CREDENTIALS_FOUND = "User Credentials is not found";
 
 

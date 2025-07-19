@@ -14,4 +14,6 @@ public interface EnquiryRepository extends JpaRepository<EnquiryEntity, UUID> {
     List<EnquiryEntity> findByStateIgnoreCaseAndDistrictIgnoreCase(String state, String district);
 
     List<EnquiryEntity> findByStateIgnoreCaseAndDistrictIgnoreCaseAndCityIgnoreCase(String state, String district, String city);
+
+    List<EnquiryEntity> findByStatusIsNull();
 }
