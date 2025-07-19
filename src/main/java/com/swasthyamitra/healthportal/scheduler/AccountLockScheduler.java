@@ -10,6 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -32,7 +35,8 @@ public class AccountLockScheduler {
         log.info("Running district-based Account Lock Scheduler...");
 
         // Step 1: Get all enquiries where status is null
-        List<EnquiryEntity> pendingEnquiries = enquiryRepository.findByStatusIsNull();
+        Timestamp fiveMinutesAgo = Timestamp.from(Instant.now().minus(5, ChronoUnit.MINUTES));
+        List<EnquiryEntity> pendingEnquiries = enquiryRepository.findRecentNullStatusEnquiries(fiveMinutesAgo);
         log.info("Found {} enquiries with null status", pendingEnquiries.size());
 
         // Step 2: Group enquiries by district (case-insensitive)

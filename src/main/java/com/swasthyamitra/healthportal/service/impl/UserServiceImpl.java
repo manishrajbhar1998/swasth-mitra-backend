@@ -101,7 +101,7 @@ public class UserServiceImpl implements UserService {
                 case "USER" -> userInfoRepository.findByRoleEnumAndState(RoleEnum.USER, state);
                 default -> new ArrayList<>();
             };
-            case TEAM_LEADS -> switch (filterRole) {
+            case TEAM_LEADS, DISTRIBUTOR_ADMIN, EMPLOYEE -> switch (filterRole) {
                 case "NOT_USER" -> userInfoRepository.findByRoleEnumNotAndStateAndDistrictAndCity(RoleEnum.USER, state,district, city);
                 case "USER" -> userInfoRepository.findByRoleEnumAndStateAndDistrictAndCity(RoleEnum.USER, state,district, city);
                 default -> new ArrayList<>();
