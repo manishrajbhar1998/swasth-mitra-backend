@@ -96,10 +96,22 @@ public class UserServiceImpl implements UserService {
                 case "" -> userInfoRepository.findAllByIsDeletedFalse();
                 default -> new ArrayList<>();
             };
-            case STATE_ADMIN -> userInfoRepository.findByRoleEnumAndState(RoleEnum.USER, state);
-            case TEAM_LEADS -> userInfoRepository.findByRoleEnumAndStateAndDistrictAndCity(RoleEnum.USER, state,district, city);
-            case USER -> new ArrayList<>();
-            default -> userInfoRepository.findByRoleEnumAndStateAndDistrict(RoleEnum.USER, state, district);
+            case STATE_ADMIN ->  switch (filterRole) {
+                case "NOT_USER" -> userInfoRepository.findByRoleEnumNotAndState(RoleEnum.USER, state);
+                case "USER" -> userInfoRepository.findByRoleEnumAndState(RoleEnum.USER, state);
+                default -> new ArrayList<>();
+            };
+            case TEAM_LEADS -> switch (filterRole) {
+                case "NOT_USER" -> userInfoRepository.findByRoleEnumNotAndStateAndDistrictAndCity(RoleEnum.USER, state,district, city);
+                case "USER" -> userInfoRepository.findByRoleEnumAndStateAndDistrictAndCity(RoleEnum.USER, state,district, city);
+                default -> new ArrayList<>();
+            };
+            case DISTRICT_ADMIN -> switch (filterRole) {
+                case "NOT_USER" -> userInfoRepository.findByRoleEnumNotAndStateAndDistrict(RoleEnum.USER, state, district);
+                case "USER" -> userInfoRepository.findByRoleEnumAndStateAndDistrict(RoleEnum.USER, state, district);
+                default -> new ArrayList<>();
+            };
+            default -> new ArrayList<>();
         };
 
 

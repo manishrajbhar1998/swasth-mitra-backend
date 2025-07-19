@@ -63,4 +63,17 @@ public interface UserInfoRepository extends JpaRepository<UserInfoEntity, UUID> 
                                                                   @Param("state") String state,
                                                                   @Param("district") String district,
                                                                   @Param("city") String city);
+
+    @Query("SELECT c FROM UserInfoEntity c WHERE c.roleEnum <> :roleEnum AND LOWER(c.state) = LOWER(:state)")
+    List<UserInfoEntity> findByRoleEnumNotAndState(RoleEnum roleEnum, String state);
+
+    @Query("SELECT c FROM UserInfoEntity c " +
+            "WHERE c.roleEnum <> :roleEnum " +
+            "AND LOWER(c.state) = LOWER(:state) " +
+            "AND LOWER(c.district) = LOWER(:district) " +
+            "AND LOWER(c.city) = LOWER(:city)")
+    List<UserInfoEntity> findByRoleEnumNotAndStateAndDistrictAndCity(RoleEnum roleEnum, String state, String district, String city);
+
+    @Query("SELECT c FROM UserInfoEntity c WHERE c.roleEnum <> :roleEnum AND LOWER(c.state) = LOWER(:state) AND LOWER(c.district) = LOWER(:district)")
+    List<UserInfoEntity> findByRoleEnumNotAndStateAndDistrict(RoleEnum roleEnum, String state, String district);
 }

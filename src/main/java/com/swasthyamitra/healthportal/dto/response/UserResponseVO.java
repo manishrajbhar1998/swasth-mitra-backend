@@ -44,6 +44,10 @@ public class UserResponseVO {
 
     private Boolean manageAdmin;
 
+    private Boolean delayedEnquiries;
+
+    private Boolean exportTableData;
+
     private String plan;
 
     private String planExpiryDate;

@@ -82,6 +82,12 @@ public class UserInfoEntity extends BaseEntity implements UserDetails {
     @Column(name = "MANAGE_ADMIN")
     private Boolean manageAdmin = false;
 
+    @Column(name = "DELAYED_ENQUIRES")
+    private Boolean delayedEnquiries = false;
+
+    @Column(name = "EXPORT_TABLE_DATA")
+    private Boolean exportTableData = false;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(roleEnum.name()));

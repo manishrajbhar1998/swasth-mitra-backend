@@ -60,5 +60,9 @@ public class UserRequestVO {
 
     private Boolean manageAdmin = false;
 
+    private Boolean delayedEnquiries = false;
+
+    private Boolean exportTableData = false;
+
     private String status;
 }
