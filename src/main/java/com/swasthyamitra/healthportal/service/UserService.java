@@ -2,6 +2,7 @@ package com.swasthyamitra.healthportal.service;
 
 import com.swasthyamitra.healthportal.dto.request.UserRequestVO;
 import com.swasthyamitra.healthportal.dto.response.UserResponseVO;
+import com.swasthyamitra.healthportal.entity.UserInfoEntity;
 import com.swasthyamitra.healthportal.enums.RoleEnum;
 
 import java.util.List;
@@ -11,7 +12,7 @@ public interface UserService {
 
     UserResponseVO addUser(UserRequestVO userRequestVO);
 
-    List<UserResponseVO> getAllUsers(RoleEnum roleEnum, String state, String district, String city, String role);
+    List<UserResponseVO> getAllUsers(UserInfoEntity userInfoEntity, String role);
 
     UserResponseVO getUserById(UUID id);
 

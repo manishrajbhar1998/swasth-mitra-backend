@@ -51,8 +51,7 @@ public class UserAPI {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserInfoEntity userInfoEntity = (UserInfoEntity) authentication.getPrincipal();
 
-        List<UserResponseVO> users = userService.getAllUsers(userInfoEntity.getRoleEnum(),userInfoEntity.getState(),
-                userInfoEntity.getDistrict(),userInfoEntity.getCity(), role);
+        List<UserResponseVO> users = userService.getAllUsers(userInfoEntity, role);
 
         ApiResponse<List<UserResponseVO>> response = ApiResponse.<List<UserResponseVO>>builder()
                 .data(users)

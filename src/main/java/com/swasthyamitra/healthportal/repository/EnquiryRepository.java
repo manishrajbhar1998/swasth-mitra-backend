@@ -19,6 +19,6 @@ public interface EnquiryRepository extends JpaRepository<EnquiryEntity, UUID> {
 
     List<EnquiryEntity> findByStatusIsNull();
 
-    @Query("SELECT e FROM EnquiryEntity e WHERE e.status IS NULL AND e.createdAt >= :fiveMinutesAgo")
-    List<EnquiryEntity> findRecentNullStatusEnquiries(Timestamp fiveMinutesAgo);
+    @Query("SELECT e FROM EnquiryEntity e WHERE e.status IS NULL AND e.createdAt >= :oneHourAgo")
+    List<EnquiryEntity> findRecentNullStatusEnquiries(Timestamp oneHourAgo);
 }

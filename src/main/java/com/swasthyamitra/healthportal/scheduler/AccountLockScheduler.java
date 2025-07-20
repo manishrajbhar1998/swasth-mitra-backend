@@ -29,14 +29,14 @@ public class AccountLockScheduler {
     }
 
     // Scheduler: runs every 5 minutes
-    @Scheduled(cron = "0 */5 * * * ?")
+    @Scheduled(cron = "* * * * * ?")
     @Transactional
     public void lockTeamLeadsForDelayedEnquiries() {
         log.info("Running district-based Account Lock Scheduler...");
 
         // Step 1: Get all enquiries where status is null
-        Timestamp fiveMinutesAgo = Timestamp.from(Instant.now().minus(5, ChronoUnit.MINUTES));
-        List<EnquiryEntity> pendingEnquiries = enquiryRepository.findRecentNullStatusEnquiries(fiveMinutesAgo);
+        Timestamp oneHourAgo = Timestamp.from(Instant.now().minus(60, ChronoUnit.MINUTES));
+        List<EnquiryEntity> pendingEnquiries = enquiryRepository.findRecentNullStatusEnquiries(oneHourAgo);
         log.info("Found {} enquiries with null status", pendingEnquiries.size());
 
         // Step 2: Group enquiries by district (case-insensitive)

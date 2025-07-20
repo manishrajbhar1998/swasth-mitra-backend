@@ -83,10 +83,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserResponseVO> getAllUsers(RoleEnum authorizeRole, String state, String district,String city, String filterRole) {
+    public List<UserResponseVO> getAllUsers(UserInfoEntity userInfoEntity, String filterRole) {
         List<UserInfoEntity> userInfoEntities;
 
-        RoleEnum roleEnum = RoleEnum.valueOf(authorizeRole.toString().toUpperCase());
+        RoleEnum roleEnum = RoleEnum.valueOf(userInfoEntity.getRoleEnum().toString().toUpperCase());
         filterRole = (filterRole != null) ? filterRole.toUpperCase() : "";
 
         userInfoEntities = switch (roleEnum) {
@@ -97,18 +97,22 @@ public class UserServiceImpl implements UserService {
                 default -> new ArrayList<>();
             };
             case STATE_ADMIN ->  switch (filterRole) {
-                case "NOT_USER" -> userInfoRepository.findByRoleEnumNotAndState(RoleEnum.USER, state);
-                case "USER" -> userInfoRepository.findByRoleEnumAndState(RoleEnum.USER, state);
+                case "NOT_USER" -> userInfoRepository.findByRoleEnumNotAndState(RoleEnum.USER, userInfoEntity.getState());
+                case "USER" -> userInfoRepository.findByRoleEnumAndState(RoleEnum.USER, userInfoEntity.getState());
                 default -> new ArrayList<>();
             };
             case TEAM_LEADS, EMPLOYEE -> switch (filterRole) {
-                case "NOT_USER" -> userInfoRepository.findByRoleEnumNotAndStateAndDistrictAndCity(RoleEnum.USER, state,district, city);
-                case "USER" -> userInfoRepository.findByRoleEnumAndStateAndDistrictAndCity(RoleEnum.USER, state,district, city);
+                case "NOT_USER" -> userInfoRepository.findByRoleEnumNotAndStateAndDistrictAndCity(RoleEnum.USER, userInfoEntity.getState(),
+                        userInfoEntity.getDistrict(), userInfoEntity.getCity());
+                case "USER" -> userInfoRepository.findByRoleEnumAndStateAndDistrictAndCity(RoleEnum.USER, userInfoEntity.getState(),
+                        userInfoEntity.getDistrict(), userInfoEntity.getCity());
                 default -> new ArrayList<>();
             };
             case DISTRICT_ADMIN, DISTRIBUTOR_ADMIN -> switch (filterRole) {
-                case "NOT_USER" -> userInfoRepository.findByRoleEnumNotAndStateAndDistrict(RoleEnum.USER, state, district);
-                case "USER" -> userInfoRepository.findByRoleEnumAndStateAndDistrict(RoleEnum.USER, state, district);
+                case "NOT_USER" -> userInfoRepository.findByRoleEnumNotAndStateAndDistrict(RoleEnum.USER, userInfoEntity.getState(),
+                        userInfoEntity.getDistrict());
+                case "USER" -> userInfoRepository.findByRoleEnumAndStateAndDistrict(RoleEnum.USER, userInfoEntity.getState(),
+                        userInfoEntity.getDistrict());
                 default -> new ArrayList<>();
             };
             default -> new ArrayList<>();
@@ -136,7 +140,7 @@ public class UserServiceImpl implements UserService {
                     }
 
                     return userResponseVO;
-                })
+                }).filter(userResponseVO -> !userResponseVO.getId().equals(userInfoEntity.getId()))
                 .toList();
 
     }
