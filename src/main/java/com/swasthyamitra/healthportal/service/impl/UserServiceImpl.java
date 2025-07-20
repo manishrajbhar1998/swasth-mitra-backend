@@ -217,7 +217,7 @@ public class UserServiceImpl implements UserService {
             planPurchaseEntity.setStatus(isActive ? "ACTIVE" : "IN_ACTIVE");
             planPurchaseRepository.save(planPurchaseEntity);
         } else {
-            userInfoEntity.setDeleted(isActive);
+            userInfoEntity.setDeleted(!isActive);
         }
 
         userInfoRepository.save(userInfoEntity);
