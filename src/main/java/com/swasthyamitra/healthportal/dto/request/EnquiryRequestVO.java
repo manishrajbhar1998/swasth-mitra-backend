@@ -13,8 +13,6 @@ public class EnquiryRequestVO
     @NotBlank(message = "User name is required and cannot be blank.")
     private String userName;
 
-    @NotBlank(message = "Email address is required.")
-    @Email(message = "Please provide a valid email address.")
     private String email;
 
     @NotBlank(message = "Mobile number is required.")
@@ -22,8 +20,13 @@ public class EnquiryRequestVO
 
     private String address;
 
+    @NotBlank(message = "City is required.")
     private String city;
+
+    @NotBlank(message = "District is required.")
     private String district;
+
+    @NotBlank(message = "State is required.")
     private String state;
     private String country;
     private String pinCode;

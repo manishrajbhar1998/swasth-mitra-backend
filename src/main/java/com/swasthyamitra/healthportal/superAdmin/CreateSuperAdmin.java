@@ -54,7 +54,14 @@ public class CreateSuperAdmin implements CommandLineRunner {
             userInfo.setGender("Male");
             userInfo.setPinCode("110001");
             userInfo.setAddress("System Admin HQ");
-            userInfo.setMaritalStatus("Single");
+            userInfo.setCity("Mumbai");
+            userInfo.setDistrict("Mumbai City");
+            userInfo.setState("Maharashtra");
+            userInfo.setExportTableData(true);
+            userInfo.setRegisteredUsers(true);
+            userInfo.setDelayedEnquiries(true);
+            userInfo.setInquiryDetails(true);
+            userInfo.setManageAdmin(true);
 
             userInfo.setEncodedPassword(CommonUtils.hashPassword(password));
             userInfo.setRoleEnum(RoleEnum.SUPER_ADMIN);
