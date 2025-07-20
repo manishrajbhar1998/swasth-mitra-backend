@@ -29,7 +29,7 @@ public class AccountLockScheduler {
     }
 
     // Scheduler: runs every 5 minutes
-    @Scheduled(cron = "* * * * * ?")
+    @Scheduled(cron = "0 */5 10-18 * * ?")
     @Transactional
     public void lockTeamLeadsForDelayedEnquiries() {
         log.info("Running district-based Account Lock Scheduler...");
@@ -54,8 +54,10 @@ public class AccountLockScheduler {
                     String district = entry.getKey();
                     log.info("District '{}' has {} delayed enquiries — locking team leads...", district, entry.getValue());
 
+                    List<RoleEnum> roleEnums = Arrays.asList(RoleEnum.TEAM_LEADS,RoleEnum.EMPLOYEE);
+
                     // Step 4: Get all TEAM_LEADS from that district
-                    List<UserInfoEntity> teamLeads = userInfoRepository.findByRoleEnumAndDistrictIgnoreCase(RoleEnum.TEAM_LEADS, district);
+                    List<UserInfoEntity> teamLeads = userInfoRepository.findByRoleEnumInAndDistrictIgnoreCase(roleEnums, district);
 
                     // Step 5: Mark them as deleted
                     for (UserInfoEntity user : teamLeads) {

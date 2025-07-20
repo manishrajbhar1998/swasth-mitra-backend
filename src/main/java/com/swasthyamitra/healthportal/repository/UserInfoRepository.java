@@ -77,5 +77,5 @@ public interface UserInfoRepository extends JpaRepository<UserInfoEntity, UUID> 
     @Query("SELECT c FROM UserInfoEntity c WHERE c.roleEnum <> :roleEnum AND LOWER(c.state) = LOWER(:state) AND LOWER(c.district) = LOWER(:district)")
     List<UserInfoEntity> findByRoleEnumNotAndStateAndDistrict(RoleEnum roleEnum, String state, String district);
 
-    List<UserInfoEntity> findByRoleEnumAndDistrictIgnoreCase(RoleEnum roleEnum, String district);
+    List<UserInfoEntity> findByRoleEnumInAndDistrictIgnoreCase(List<RoleEnum> roleEnums, String district);
 }
