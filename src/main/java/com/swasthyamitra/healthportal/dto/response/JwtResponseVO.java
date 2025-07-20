@@ -27,6 +27,7 @@ public class JwtResponseVO {
     private Boolean manageAdmin = false;
     private Boolean delayedEnquiries = false;
     private Boolean exportTableData = false;
+    private Boolean createUser = false;
 
 
     public JwtResponseVO(String accessToken, String refreshToken, UserInfoEntity userInfoEntity, RoleEnum role) {
@@ -42,6 +43,7 @@ public class JwtResponseVO {
         this.manageAdmin = userInfoEntity.getManageAdmin();
         this.delayedEnquiries = userInfoEntity.getDelayedEnquiries();
         this.exportTableData = userInfoEntity.getExportTableData();
+        this.createUser = userInfoEntity.getCreateUser();
     }
 }
 

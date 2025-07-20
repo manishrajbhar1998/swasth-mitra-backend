@@ -29,7 +29,7 @@ public class AccountLockScheduler {
     }
 
     // Scheduler: runs every 5 minutes
-    @Scheduled(cron = "0 */5 10-18 * * ?")
+    @Scheduled(cron = "0 */5 10-18 * * ?", zone = "Asia/Kolkata")
     @Transactional
     public void lockTeamLeadsForDelayedEnquiries() {
         log.info("Running district-based Account Lock Scheduler...");
@@ -47,7 +47,8 @@ public class AccountLockScheduler {
                         Collectors.counting()
                 ));
 
-        // Step 3: Check districts with >= 5 delayed enquiries
+        // Step 3: Check districts with >= 5 de
+        // layed enquiries
         districtCounts.entrySet().stream()
                 .filter(entry -> entry.getValue() >= 5)
                 .forEach(entry -> {

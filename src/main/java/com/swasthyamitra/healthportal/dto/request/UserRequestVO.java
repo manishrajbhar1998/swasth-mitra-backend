@@ -64,5 +64,7 @@ public class UserRequestVO {
 
     private Boolean exportTableData = false;
 
+    private Boolean createUser = false;
+
     private String status;
 }

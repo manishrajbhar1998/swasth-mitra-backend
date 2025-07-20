@@ -88,6 +88,9 @@ public class UserInfoEntity extends BaseEntity implements UserDetails {
     @Column(name = "EXPORT_TABLE_DATA")
     private Boolean exportTableData = false;
 
+    @Column(name = "createUser")
+    private Boolean createUser = false;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(roleEnum.name()));

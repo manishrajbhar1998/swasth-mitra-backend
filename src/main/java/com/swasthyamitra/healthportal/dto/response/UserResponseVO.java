@@ -48,6 +48,8 @@ public class UserResponseVO {
 
     private Boolean exportTableData;
 
+    private Boolean createUser;
+
     private String plan;
 
     private String planExpiryDate;
