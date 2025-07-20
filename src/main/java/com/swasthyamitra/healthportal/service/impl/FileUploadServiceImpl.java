@@ -5,6 +5,10 @@ import com.swasthyamitra.healthportal.service.FileUploadService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -64,6 +68,14 @@ public class FileUploadServiceImpl implements FileUploadService {
         } catch (IOException e) {
             log.error("File upload failed", e);
             throw new InvalidInputException("File upload failed: " + e.getMessage());
+        }
+    }
+
+    public byte[] downloadImageAsBytes(String imageUrl) {
+        try (InputStream inputStream = new URL(imageUrl).openStream()) {
+            return inputStream.readAllBytes(); // Java 9+. For Java 8, use ByteArrayOutputStream.
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to download image: " + e.getMessage());
         }
     }
 

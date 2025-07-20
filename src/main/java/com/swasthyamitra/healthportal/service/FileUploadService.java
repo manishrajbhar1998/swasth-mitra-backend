@@ -5,4 +5,6 @@ import org.springframework.web.multipart.MultipartFile;
 public interface FileUploadService {
 
     String storeFile(MultipartFile file);
+
+    byte[] downloadImageAsBytes(String imageUrl);
 }
