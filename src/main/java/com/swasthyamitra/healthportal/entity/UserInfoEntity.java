@@ -125,5 +125,9 @@ public class UserInfoEntity extends BaseEntity implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    public String getActualPassword() {
+        return password;
+    }
 }
 

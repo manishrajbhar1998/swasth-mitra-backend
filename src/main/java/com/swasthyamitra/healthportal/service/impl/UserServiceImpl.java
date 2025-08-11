@@ -195,7 +195,7 @@ public class UserServiceImpl implements UserService {
 
         UserInfoEntity userInfoEntity = mapper.convertUserRequestToUserInfoEntity(userRequestVO);
         userInfoEntity.setEmail(userRequestVO.getEmail());
-        userInfoEntity.setPassword(user.getPassword());
+        userInfoEntity.setPassword(user.getActualPassword());
         userInfoEntity.setEncodedPassword(user.getEncodedPassword());
         userInfoEntity.setCreatedBy(userInfoEntity.getCreatedBy());
         userInfoEntity.setUpdatedBy(userRequestVO.getUpdatedBy());
@@ -219,6 +219,7 @@ public class UserServiceImpl implements UserService {
                 throw new InvalidInputException("Your plan is either unpaid or has expired. Please renew your subscription.");
             }
             planPurchaseEntity.setStatus(isActive ? "ACTIVE" : "IN_ACTIVE");
+            userInfoEntity.setDeleted(!isActive);
             planPurchaseRepository.save(planPurchaseEntity);
         } else {
             userInfoEntity.setDeleted(!isActive);

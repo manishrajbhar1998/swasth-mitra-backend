@@ -29,7 +29,7 @@ public class AccountLockScheduler {
     }
 
     // Scheduler: runs every 5 minutes
-    @Scheduled(cron = "0 */5 10-18 * * ?", zone = "Asia/Kolkata")
+    //@Scheduled(cron = "0 */5 10-18 * * ?", zone = "Asia/Kolkata")
     @Transactional
     public void lockTeamLeadsForDelayedEnquiries() {
         log.info("Running district-based Account Lock Scheduler...");
