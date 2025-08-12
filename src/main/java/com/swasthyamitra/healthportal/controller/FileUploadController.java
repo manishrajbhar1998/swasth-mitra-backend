@@ -33,22 +33,16 @@ public class FileUploadController {
     }
 
     @GetMapping("/download")
-    public ResponseEntity<ByteArrayResource>  downloadImageAsBase64Bytes(@RequestParam String imageUrl) {
+    public ResponseEntity<String> downloadImageAsBase64(@RequestParam String imageUrl) {
+        // Download image as raw bytes
+        byte[] imageBytes = fileUploadService.downloadImageAsBytes(imageUrl);
 
-            // Download image as raw bytes
-            byte[] imageBytes = fileUploadService.downloadImageAsBytes(imageUrl);
+        // Convert bytes to Base64
+        String base64Image = Base64.getEncoder().encodeToString(imageBytes);
 
-            ByteArrayResource resource = new ByteArrayResource(imageBytes);
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + "abc");
-
-            return ResponseEntity.ok()
-                    .headers(headers)
-                    .contentLength(imageBytes.length)
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .body(resource);
-
+        return ResponseEntity.ok()
+                .header("Content-Type", "text/plain")
+                .body(base64Image);
     }
 
 }

@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
@@ -66,16 +67,18 @@ public class PlanPurchaseServiceImpl implements PlanPurchaseService {
 
         planPurchaseRepository.save(planPurchaseEntity);
 
-        return mapper.convertPlanPurchaseEntityToPlanPurchaseResponseDTO(planPurchaseEntity);
-    }
+        PlanPurchaseResponseDTO dto = mapper.convertPlanPurchaseEntityToPlanPurchaseResponseDTO(planPurchaseEntity);
+        dto.setProfilePic(convertImageUrlToBase64(planPurchaseEntity.getProfilePic()));
+        return dto;      }
 
     @Override
     public PlanPurchaseResponseDTO getPlanPurchaseByUserId(UUID userId) {
         PlanPurchaseEntity planPurchaseEntity = planPurchaseRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("No plan purchase found for this user."));
 
-        return mapper.convertPlanPurchaseEntityToPlanPurchaseResponseDTO(planPurchaseEntity);
-    }
+        PlanPurchaseResponseDTO dto = mapper.convertPlanPurchaseEntityToPlanPurchaseResponseDTO(planPurchaseEntity);
+        dto.setProfilePic(convertImageUrlToBase64(planPurchaseEntity.getProfilePic()));
+        return dto;      }
 
     @Override
     public PlanPurchaseResponseDTO updatePlanPurchase(PlanPurchaseRequestDTO requestDTO, UUID userId) throws IOException {
@@ -107,7 +110,9 @@ public class PlanPurchaseServiceImpl implements PlanPurchaseService {
 
         planPurchaseRepository.save(updatedEntity);
 
-        return mapper.convertPlanPurchaseEntityToPlanPurchaseResponseDTO(updatedEntity);
+        PlanPurchaseResponseDTO dto = mapper.convertPlanPurchaseEntityToPlanPurchaseResponseDTO(updatedEntity);
+        dto.setProfilePic(convertImageUrlToBase64(updatedEntity.getProfilePic()));
+        return dto;
     }
 
     @Override
@@ -121,8 +126,13 @@ public class PlanPurchaseServiceImpl implements PlanPurchaseService {
             planPurchaseEntities = planPurchaseRepository.findAll();
         }
 
-        return planPurchaseEntities.stream().map(mapper::convertPlanPurchaseEntityToPlanPurchaseResponseDTO).toList();
-    }
+        return planPurchaseEntities.stream()
+                .map(entity -> {
+                    PlanPurchaseResponseDTO dto = mapper.convertPlanPurchaseEntityToPlanPurchaseResponseDTO(entity);
+                    dto.setProfilePic(convertImageUrlToBase64(entity.getProfilePic()));
+                    return dto;
+                })
+                .toList();    }
 
     private Timestamp calculatePlanExpiryDate() {
         LocalDateTime expiryDateTime = LocalDateTime.now()
@@ -177,6 +187,16 @@ public class PlanPurchaseServiceImpl implements PlanPurchaseService {
 
         return familyMembers;
     }
+    public  String convertImageUrlToBase64(String imageUrl) {
+        if (imageUrl == null || imageUrl.isEmpty()) return null;
 
+        try {
+            byte[] imageBytes = fileUploadService.downloadImageAsBytes(imageUrl);
+            return Base64.getEncoder().encodeToString(imageBytes);
+        } catch (Exception e) {
+            // Log or handle gracefully
+            return null;
+        }
+    }
 
 }
