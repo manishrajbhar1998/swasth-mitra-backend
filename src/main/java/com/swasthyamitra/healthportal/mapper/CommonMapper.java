@@ -69,7 +69,6 @@ public interface CommonMapper {
 
     @Mapping(source = "createdAt", target = "createdAt", dateFormat = "yyyy-MM-dd'T'HH:mm:ss")
     @Mapping(target = "planExpiryDate", expression = "java(formatDate(planPurchaseEntity.getPlanExpiryDate()))")
-    @Mapping(target = "profilePic", ignore = true)
     PlanPurchaseResponseDTO convertPlanPurchaseEntityToPlanPurchaseResponseDTO(PlanPurchaseEntity planPurchaseEntity);
 
     default String formatDate(Timestamp timestamp) {
