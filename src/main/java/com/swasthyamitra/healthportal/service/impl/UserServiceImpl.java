@@ -73,7 +73,6 @@ public class UserServiceImpl implements UserService {
         }
 
         UserInfoEntity userInfoEntity = mapper.convertUserRequestToUserInfoEntity(userRequestVO);
-        userInfoEntity.setDeleted(userRequestVO.getRole().equalsIgnoreCase("USER"));
         userInfoEntity.setEmail(userRequestVO.getEmail());
         userInfoEntity.setCreatedBy(userRequestVO.getCreatedBy());
         userInfoEntity.setPassword(userRequestVO.getPassword());
