@@ -53,7 +53,7 @@ public class PlanPurchaseServiceImpl implements PlanPurchaseService {
         planPurchaseEntity.setMemberId(CommonUtils.generateMemberId());
         planPurchaseEntity.setProfilePic(
                 requestDTO.getProfilePic() != null && !requestDTO.getProfilePic().isEmpty()
-                        ? fileUploadService.storeFile(requestDTO.getProfilePic())
+                        ? convertImageUrlToBase64(fileUploadService.storeFile(requestDTO.getProfilePic()))
                         : null
         );
 
@@ -67,18 +67,16 @@ public class PlanPurchaseServiceImpl implements PlanPurchaseService {
 
         planPurchaseRepository.save(planPurchaseEntity);
 
-        PlanPurchaseResponseDTO dto = mapper.convertPlanPurchaseEntityToPlanPurchaseResponseDTO(planPurchaseEntity);
-        dto.setProfilePic(convertImageUrlToBase64(planPurchaseEntity.getProfilePic()));
-        return dto;      }
+        return mapper.convertPlanPurchaseEntityToPlanPurchaseResponseDTO(planPurchaseEntity);
+    }
 
     @Override
     public PlanPurchaseResponseDTO getPlanPurchaseByUserId(UUID userId) {
         PlanPurchaseEntity planPurchaseEntity = planPurchaseRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("No plan purchase found for this user."));
 
-        PlanPurchaseResponseDTO dto = mapper.convertPlanPurchaseEntityToPlanPurchaseResponseDTO(planPurchaseEntity);
-        dto.setProfilePic(convertImageUrlToBase64(planPurchaseEntity.getProfilePic()));
-        return dto;      }
+        return mapper.convertPlanPurchaseEntityToPlanPurchaseResponseDTO(planPurchaseEntity);
+    }
 
     @Override
     public PlanPurchaseResponseDTO updatePlanPurchase(PlanPurchaseRequestDTO requestDTO, UUID userId) throws IOException {
@@ -100,7 +98,7 @@ public class PlanPurchaseServiceImpl implements PlanPurchaseService {
 
         // Only update image if new file is provided
         if (requestDTO.getProfilePic() != null && !requestDTO.getProfilePic().isEmpty()) {
-            updatedEntity.setProfilePic(fileUploadService.storeFile(requestDTO.getProfilePic()));
+            updatedEntity.setProfilePic(convertImageUrlToBase64(fileUploadService.storeFile(requestDTO.getProfilePic())));
         } else {
             updatedEntity.setProfilePic(existingPlan.getProfilePic());
         }
@@ -110,9 +108,7 @@ public class PlanPurchaseServiceImpl implements PlanPurchaseService {
 
         planPurchaseRepository.save(updatedEntity);
 
-        PlanPurchaseResponseDTO dto = mapper.convertPlanPurchaseEntityToPlanPurchaseResponseDTO(updatedEntity);
-        dto.setProfilePic(convertImageUrlToBase64(updatedEntity.getProfilePic()));
-        return dto;
+        return mapper.convertPlanPurchaseEntityToPlanPurchaseResponseDTO(updatedEntity);
     }
 
     @Override
@@ -154,7 +150,7 @@ public class PlanPurchaseServiceImpl implements PlanPurchaseService {
                 !familyMembers.getSpouse().getProfilePic().isEmpty()) {
 
             String url = fileUploadService.storeFile(familyMembers.getSpouse().getProfilePic());
-            familyMembers.getSpouse().setProfilePhotoUrl(url);
+            familyMembers.getSpouse().setProfilePhotoUrl(convertImageUrlToBase64(url));
         }
 
         // Handle father
@@ -163,7 +159,7 @@ public class PlanPurchaseServiceImpl implements PlanPurchaseService {
                 !familyMembers.getFather().getProfilePic().isEmpty()) {
 
             String url = fileUploadService.storeFile(familyMembers.getFather().getProfilePic());
-            familyMembers.getFather().setProfilePhotoUrl(url);
+            familyMembers.getFather().setProfilePhotoUrl(convertImageUrlToBase64(url));
         }
 
         // Handle mother
@@ -172,7 +168,7 @@ public class PlanPurchaseServiceImpl implements PlanPurchaseService {
                 !familyMembers.getMother().getProfilePic().isEmpty()) {
 
             String url = fileUploadService.storeFile(familyMembers.getMother().getProfilePic());
-            familyMembers.getMother().setProfilePhotoUrl(url);
+            familyMembers.getMother().setProfilePhotoUrl(convertImageUrlToBase64(url));
         }
 
         // Handle children
@@ -180,7 +176,7 @@ public class PlanPurchaseServiceImpl implements PlanPurchaseService {
             for (FamilyMemberDTO child : familyMembers.getChildren()) {
                 if (child.getProfilePic() != null && !child.getProfilePic().isEmpty()) {
                     String url = fileUploadService.storeFile(child.getProfilePic());
-                    child.setProfilePhotoUrl(url);
+                    child.setProfilePhotoUrl(convertImageUrlToBase64(url));
                 }
             }
         }

@@ -44,7 +44,7 @@ public class PlanPurchaseEntity extends BaseEntity{
     @Column(name = "PRESENT_DISEASE_OTHER")
     private String presentDiseaseOther;
 
-    @Column(name = "PROFILE_PIC")
+    @Column(name = "PROFILE_PIC", columnDefinition = "TEXT")
     private String profilePic;
 
     @Column(name = "USER_ID")
