@@ -77,4 +77,7 @@ public class PlanPurchaseEntity extends BaseEntity{
     @Convert(converter = FamilyMembersConverter.class)
     private FamilyMembersDTO familyMembersDTO;
 
+    @Transient
+    private String profilePicBase64;
+
 }
