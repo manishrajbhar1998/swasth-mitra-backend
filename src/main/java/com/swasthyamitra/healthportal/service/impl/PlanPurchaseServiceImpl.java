@@ -8,9 +8,11 @@ import com.swasthyamitra.healthportal.entity.PlanPurchaseEntity;
 
 import static com.swasthyamitra.healthportal.mapper.CommonMapper.mapper;
 
+import com.swasthyamitra.healthportal.entity.UserInfoEntity;
 import com.swasthyamitra.healthportal.exception.InvalidInputException;
 import com.swasthyamitra.healthportal.exception.ResourceNotFoundException;
 import com.swasthyamitra.healthportal.repository.PlanPurchaseRepository;
+import com.swasthyamitra.healthportal.repository.UserInfoRepository;
 import com.swasthyamitra.healthportal.service.FileUploadService;
 import com.swasthyamitra.healthportal.service.PlanPurchaseService;
 import com.swasthyamitra.healthportal.utils.CommonUtils;
@@ -41,7 +43,11 @@ public class PlanPurchaseServiceImpl implements PlanPurchaseService {
     @Autowired
     private FileUploadService fileUploadService;
 
+    @Autowired
+    private UserInfoRepository userInfoRepository;
+
     @Override
+    @Transactional
     public PlanPurchaseResponseDTO savePlanPurchase(PlanPurchaseRequestDTO requestDTO, UUID userId) throws IOException {
 
         if (planPurchaseRepository.findByUserId(userId).isPresent()) {
@@ -67,6 +73,10 @@ public class PlanPurchaseServiceImpl implements PlanPurchaseService {
 
         planPurchaseRepository.save(planPurchaseEntity);
 
+        UserInfoEntity user = planPurchaseEntity.getUserInfo();
+        user.setDeleted(true);
+        userInfoRepository.save(user);
+
         return mapper.convertPlanPurchaseEntityToPlanPurchaseResponseDTO(planPurchaseEntity);
     }
 
@@ -79,6 +89,7 @@ public class PlanPurchaseServiceImpl implements PlanPurchaseService {
     }
 
     @Override
+    @Transactional
     public PlanPurchaseResponseDTO updatePlanPurchase(PlanPurchaseRequestDTO requestDTO, UUID userId) throws IOException {
 
         PlanPurchaseEntity existingPlan = planPurchaseRepository.findByUserId(userId)
@@ -107,6 +118,10 @@ public class PlanPurchaseServiceImpl implements PlanPurchaseService {
         updatedEntity.setFamilyMembersDTO(updatedFamilyMembers);
 
         planPurchaseRepository.save(updatedEntity);
+
+        UserInfoEntity user = updatedEntity.getUserInfo();
+        user.setDeleted(true);
+        userInfoRepository.save(user);
 
         return mapper.convertPlanPurchaseEntityToPlanPurchaseResponseDTO(updatedEntity);
     }
