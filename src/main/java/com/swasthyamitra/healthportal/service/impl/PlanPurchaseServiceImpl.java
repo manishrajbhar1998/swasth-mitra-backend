@@ -45,7 +45,7 @@ public class PlanPurchaseServiceImpl implements PlanPurchaseService {
     public PlanPurchaseResponseDTO savePlanPurchase(PlanPurchaseRequestDTO requestDTO, UUID userId) throws IOException {
 
         if (planPurchaseRepository.findByUserId(userId).isPresent()) {
-            throw new InvalidInputException("plan already exists for this user.");
+           return updatePlanPurchase(requestDTO, userId);
         }
 
         PlanPurchaseEntity planPurchaseEntity = mapper.convertPlanPurchaseRequesToPlanPurchaseEntity(requestDTO);
