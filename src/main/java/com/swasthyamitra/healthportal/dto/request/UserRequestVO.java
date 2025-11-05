@@ -27,7 +27,6 @@ public class UserRequestVO {
     @Email(message = "Please provide a valid email address.")
     private String email;
 
-    @NotBlank(message = "Phone Number is required.")
     private String phoneNumber;
 
     @NotBlank(message = "Address Number is required.")
