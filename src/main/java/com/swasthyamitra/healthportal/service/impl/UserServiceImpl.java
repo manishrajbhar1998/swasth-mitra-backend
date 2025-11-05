@@ -68,9 +68,11 @@ public class UserServiceImpl implements UserService {
             throw new UserExistsException("Email already registered: " + userRequestVO.getEmail());
         }
 
-        if (userInfoRepository.existsByPhoneNumber(userRequestVO.getPhoneNumber())) {
-            throw new UserExistsException("Phone Number already registered: " + userRequestVO.getPhoneNumber());
-        }
+       if (phoneNumber != null) {
+        if (userInfoRepository.existsByPhoneNumber(phoneNumber)) {
+        throw new UserExistsException("Phone Number already registered: " + phoneNumber);
+       }
+      }
 
         UserInfoEntity userInfoEntity = mapper.convertUserRequestToUserInfoEntity(userRequestVO);
         userInfoEntity.setEmail(userRequestVO.getEmail());
@@ -187,11 +189,15 @@ public class UserServiceImpl implements UserService {
             }
         }
 
-        if (!user.getPhoneNumber().equalsIgnoreCase(userRequestVO.getPhoneNumber())) {
-            if (userInfoRepository.existsByPhoneNumber(userRequestVO.getPhoneNumber())) {
-                throw new UserExistsException("Phone Number already registered: " + userRequestVO.getPhoneNumber());
-            }
-        }
+     String existingPhone = user.getPhoneNumber();
+     String newPhone = userRequestVO.getPhoneNumber();
+
+// Check only if newPhone is not null and different from existingPhone
+if (newPhone != null && !newPhone.equalsIgnoreCase(existingPhone)) {
+    if (userInfoRepository.existsByPhoneNumber(newPhone)) {
+        throw new UserExistsException("Phone Number already registered: " + newPhone);
+    }
+}
 
         UserInfoEntity userInfoEntity = mapper.convertUserRequestToUserInfoEntity(userRequestVO);
         userInfoEntity.setEmail(userRequestVO.getEmail());
