@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 
@@ -72,10 +74,17 @@ public class FileUploadServiceImpl implements FileUploadService {
     }
 
     public byte[] downloadImageAsBytes(String imageUrl) {
-        try (InputStream inputStream = new URL(imageUrl).openStream()) {
-            return inputStream.readAllBytes(); // Java 9+. For Java 8, use ByteArrayOutputStream.
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to download image: " + e.getMessage());
+        try {
+            // Properly encode the URL to handle spaces and special characters
+            URL url = new URL(imageUrl);
+            URI uri = new URI(url.getProtocol(), url.getUserInfo(), url.getHost(),
+                    url.getPort(), url.getPath(), url.getQuery(), url.getRef());
+
+            try (InputStream inputStream = uri.toURL().openStream()) {
+                return inputStream.readAllBytes(); // Java 9+
+            }
+        } catch (IOException | URISyntaxException e) {
+            throw new RuntimeException("Failed to download image: " + e.getMessage(), e);
         }
     }
 
