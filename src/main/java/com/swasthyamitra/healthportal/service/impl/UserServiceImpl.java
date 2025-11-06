@@ -68,11 +68,13 @@ public class UserServiceImpl implements UserService {
             throw new UserExistsException("Email already registered: " + userRequestVO.getEmail());
         }
 
-       if (phoneNumber != null) {
-        if (userInfoRepository.existsByPhoneNumber(phoneNumber)) {
-        throw new UserExistsException("Phone Number already registered: " + phoneNumber);
-       }
-      }
+        String phoneNumber = userRequestVO.getPhoneNumber();
+
+        if (phoneNumber != null) {
+            if (userInfoRepository.existsByPhoneNumber(phoneNumber)) {
+                throw new UserExistsException("Phone Number already registered: " + phoneNumber);
+            }
+        }
 
         UserInfoEntity userInfoEntity = mapper.convertUserRequestToUserInfoEntity(userRequestVO);
         userInfoEntity.setEmail(userRequestVO.getEmail());
@@ -106,46 +108,39 @@ public class UserServiceImpl implements UserService {
             };
             case TEAM_LEADS, EMPLOYEE -> switch (filterRole) {
                 case "NOT_USER" ->
-                        userInfoRepository.findByRoleEnumNotAndStateAndDistrictAndCity(RoleEnum.USER, userInfoEntity.getState(),
-                                userInfoEntity.getDistrict(), userInfoEntity.getCity());
+                        userInfoRepository.findByRoleEnumNotAndStateAndDistrictAndCity(RoleEnum.USER, userInfoEntity.getState(), userInfoEntity.getDistrict(), userInfoEntity.getCity());
                 case "USER" ->
-                        userInfoRepository.findByRoleEnumAndStateAndDistrictAndCity(RoleEnum.USER, userInfoEntity.getState(),
-                                userInfoEntity.getDistrict(), userInfoEntity.getCity());
+                        userInfoRepository.findByRoleEnumAndStateAndDistrictAndCity(RoleEnum.USER, userInfoEntity.getState(), userInfoEntity.getDistrict(), userInfoEntity.getCity());
                 default -> new ArrayList<>();
             };
             case DISTRICT_ADMIN, DISTRIBUTOR_ADMIN -> switch (filterRole) {
                 case "NOT_USER" ->
-                        userInfoRepository.findByRoleEnumNotAndStateAndDistrict(RoleEnum.USER, userInfoEntity.getState(),
-                                userInfoEntity.getDistrict());
+                        userInfoRepository.findByRoleEnumNotAndStateAndDistrict(RoleEnum.USER, userInfoEntity.getState(), userInfoEntity.getDistrict());
                 case "USER" ->
-                        userInfoRepository.findByRoleEnumAndStateAndDistrict(RoleEnum.USER, userInfoEntity.getState(),
-                                userInfoEntity.getDistrict());
+                        userInfoRepository.findByRoleEnumAndStateAndDistrict(RoleEnum.USER, userInfoEntity.getState(), userInfoEntity.getDistrict());
                 default -> new ArrayList<>();
             };
             default -> new ArrayList<>();
         };
 
 
-        return userInfoEntities.stream()
-                .map(user -> {
-                    UserResponseVO userResponseVO = mapper.convertUserInfoEntityToUserResponse(user);
-                    userResponseVO.setStatus(user.isDeleted() ? "IN_ACTIVE" : "ACTIVE");
+        return userInfoEntities.stream().map(user -> {
+            UserResponseVO userResponseVO = mapper.convertUserInfoEntityToUserResponse(user);
+            userResponseVO.setStatus(user.isDeleted() ? "IN_ACTIVE" : "ACTIVE");
 
-                    PlanPurchaseEntity planPurchaseEntity = planPurchaseRepository
-                            .findByUserId(user.getId()) // or any logic
-                            .orElse(null);
+            PlanPurchaseEntity planPurchaseEntity = planPurchaseRepository.findByUserId(user.getId()) // or any logic
+                    .orElse(null);
 
-                    if (planPurchaseEntity != null) {
-                        userResponseVO.setMemberId(planPurchaseEntity.getMemberId());
-                        userResponseVO.setPlan(planPurchaseEntity.getPlan());
-                        userResponseVO.setPaymentStatus(planPurchaseEntity.getPaymentStatus());
-                        userResponseVO.setStatus(planPurchaseEntity.getStatus());
-                        userResponseVO.setPlanExpiryDate(formatDate(planPurchaseEntity.getPlanExpiryDate()));
-                    }
+            if (planPurchaseEntity != null) {
+                userResponseVO.setMemberId(planPurchaseEntity.getMemberId());
+                userResponseVO.setPlan(planPurchaseEntity.getPlan());
+                userResponseVO.setPaymentStatus(planPurchaseEntity.getPaymentStatus());
+                userResponseVO.setStatus(planPurchaseEntity.getStatus());
+                userResponseVO.setPlanExpiryDate(formatDate(planPurchaseEntity.getPlanExpiryDate()));
+            }
 
-                    return userResponseVO;
-                }).filter(userResponseVO -> !userResponseVO.getId().equals(userInfoEntity.getId()))
-                .toList();
+            return userResponseVO;
+        }).filter(userResponseVO -> !userResponseVO.getId().equals(userInfoEntity.getId())).toList();
 
     }
 
@@ -156,11 +151,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseVO getUserById(UUID id) {
-        UserInfoEntity user = userInfoRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + id));
+        UserInfoEntity user = userInfoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + id));
 
-        PlanPurchaseEntity planPurchaseEntity = planPurchaseRepository
-                .findByUserId(user.getId()) // or any logic
+        PlanPurchaseEntity planPurchaseEntity = planPurchaseRepository.findByUserId(user.getId()) // or any logic
                 .orElse(null);
 
         UserResponseVO userResponseVO = mapper.convertUserInfoEntityToUserResponse(user);
@@ -181,23 +174,22 @@ public class UserServiceImpl implements UserService {
 
         ValidationUtils.Cc(userRequestVO);
 
-        UserInfoEntity user = userInfoRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + id));
+        UserInfoEntity user = userInfoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + id));
         if (!user.getEmail().equalsIgnoreCase(userRequestVO.getEmail())) {
             if (userInfoRepository.existsByEmail(userRequestVO.getEmail())) {
                 throw new UserExistsException("Email already registered: " + userRequestVO.getEmail());
             }
         }
 
-     String existingPhone = user.getPhoneNumber();
-     String newPhone = userRequestVO.getPhoneNumber();
+        String existingPhone = user.getPhoneNumber();
+        String newPhone = userRequestVO.getPhoneNumber();
 
-// Check only if newPhone is not null and different from existingPhone
-if (newPhone != null && !newPhone.equalsIgnoreCase(existingPhone)) {
-    if (userInfoRepository.existsByPhoneNumber(newPhone)) {
-        throw new UserExistsException("Phone Number already registered: " + newPhone);
-    }
-}
+      // Check only if newPhone is not null and different from existingPhone
+        if (newPhone != null && !newPhone.equalsIgnoreCase(existingPhone)) {
+            if (userInfoRepository.existsByPhoneNumber(newPhone)) {
+                throw new UserExistsException("Phone Number already registered: " + newPhone);
+            }
+        }
 
         UserInfoEntity userInfoEntity = mapper.convertUserRequestToUserInfoEntity(userRequestVO);
         userInfoEntity.setEmail(userRequestVO.getEmail());
@@ -210,15 +202,13 @@ if (newPhone != null && !newPhone.equalsIgnoreCase(existingPhone)) {
 
         boolean isActive = userRequestVO.getStatus().equalsIgnoreCase("ACTIVE");
 
-        PlanPurchaseEntity planPurchaseEntity = planPurchaseRepository.findByUserId(userInfoEntity.getId())
-                .orElse((null));
+        PlanPurchaseEntity planPurchaseEntity = planPurchaseRepository.findByUserId(userInfoEntity.getId()).orElse((null));
         if (planPurchaseEntity != null) {
 
-        LocalDate expiryDate = planPurchaseEntity.getPlanExpiryDate().toLocalDateTime().toLocalDate();
-        LocalDate today = LocalDate.now();
+            LocalDate expiryDate = planPurchaseEntity.getPlanExpiryDate().toLocalDateTime().toLocalDate();
+            LocalDate today = LocalDate.now();
 
-            if (!"SUCCESS".equalsIgnoreCase(planPurchaseEntity.getPaymentStatus()) ||
-                    expiryDate.isBefore(today)) {
+            if (!"SUCCESS".equalsIgnoreCase(planPurchaseEntity.getPaymentStatus()) || expiryDate.isBefore(today)) {
                 throw new InvalidInputException("Your plan is either unpaid or has expired. Please renew your subscription.");
             }
             planPurchaseEntity.setStatus(isActive ? "ACTIVE" : "IN_ACTIVE");
@@ -254,11 +244,10 @@ if (newPhone != null && !newPhone.equalsIgnoreCase(existingPhone)) {
     public void handleForgotPassword(String email) {
         log.info("Initiating forgot password process for email: {}", email);
 
-        UserInfoEntity user = userInfoRepository.findByEmail(email)
-                .orElseThrow(() -> {
-                    log.warn("Forgot password attempt failed — no user found with email: {}", email);
-                    return new ResourceNotFoundException("User not found with Email: " + email);
-                });
+        UserInfoEntity user = userInfoRepository.findByEmail(email).orElseThrow(() -> {
+            log.warn("Forgot password attempt failed — no user found with email: {}", email);
+            return new ResourceNotFoundException("User not found with Email: " + email);
+        });
 
         log.debug("User found for forgot password: id={}, email={}", user.getId(), user.getEmail());
 
@@ -275,8 +264,7 @@ if (newPhone != null && !newPhone.equalsIgnoreCase(existingPhone)) {
 
         TokenLogEntity tokenLog = verifyTokenForResetPassword(token);
 
-        UserInfoEntity userInfoEntity = userInfoRepository.findById(tokenLog.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + tokenLog.getUserId()));
+        UserInfoEntity userInfoEntity = userInfoRepository.findById(tokenLog.getUserId()).orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + tokenLog.getUserId()));
 
         userInfoEntity.setPassword(password);
         userInfoEntity.setEncodedPassword(CommonUtils.hashPassword(password));
@@ -322,8 +310,7 @@ if (newPhone != null && !newPhone.equalsIgnoreCase(existingPhone)) {
             tokenLogRepository.save(tokenLog1);
         }
 
-        List<TokenLogEntity> tokenLogs = tokenLogRepository
-                .findByUserIdAndIsValidAndCreatedAtGreaterThanEqual(id, 1, LocalDateTime.now().minusMinutes(10));
+        List<TokenLogEntity> tokenLogs = tokenLogRepository.findByUserIdAndIsValidAndCreatedAtGreaterThanEqual(id, 1, LocalDateTime.now().minusMinutes(10));
         if (tokenLogs.size() > 1) {
             throw new ExpiredTokenException("Password recovery mail already sent. Please check your spam or wait for 10  min for new reset request");
         }
